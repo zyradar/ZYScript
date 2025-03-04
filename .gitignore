@@ -1,0 +1,13 @@
+# 默认忽略的文件
+/*
+!/CheckData.py
+!/ConvertFormat.py
+!/CopyPaste.py
+!/Crawler.py
+!/EXpandData.py
+!/GetParameters.py
+!/MakeDataset.py
+!/README.md
+!/UI.py
+!/version.txt
+!/.gitignore
