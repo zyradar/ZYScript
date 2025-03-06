@@ -289,7 +289,10 @@ class CheckDaset:
 
         def on_submit():                                    # 创建提交按钮
             self.format = format_entry.get() if format_entry.get() else ".jpg,.JPG,.png"
-            self.format = list(i.strip(' ') for i in self.format.split(','))
+            try:
+                self.format = list(i.strip(' ') for i in self.format.split(','))
+            except:
+                self.format = self.format
             for i in self.format:
                 if len(i.split('=')) > 1:
                     self.save_img_format = i.split('=')[1]

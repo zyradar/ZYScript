@@ -290,7 +290,10 @@ class DataSet:
 
         def on_submit():                                    # 创建提交按钮
             self.format = format_entry.get() if format_entry.get() else self.format
-            self.format = tuple(i.strip(' ') for i in self.format.split(','))
+            try:
+                self.format = tuple(i.strip(' ') for i in self.format.split(','))
+            except:
+                self.format = self.format
             getformat.destroy()                          # 关闭输入窗口
         tk.Button(getformat, text="提交", command=on_submit, width=20, bg="lightblue").pack(pady=10)
         getformat.wait_window()                          # 等待直到输入窗口关闭
