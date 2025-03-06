@@ -38,15 +38,18 @@ class Format:
             with open(os.path.join(path, name).replace('.json', '.txt'), 'w') as file:
                 for line in output:
                     file.write(line + '\n')
-            if self.open_window:
-                image_bytes = np.asarray(
-                    bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                    dtype=np.uint8)
-                img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                img = cv2.resize(img, (1920, 1200))
-                img = self.add_progress(img, count, len(os.listdir(path)), 1)
-                count += 1
-                self.take_gui(img)
+            try:
+                if self.open_window:
+                    image_bytes = np.asarray(
+                        bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
+                        dtype=np.uint8)
+                    img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+                    img = cv2.resize(img, (1920, 1200))
+                    img = self.add_progress(img, count, len(os.listdir(path)), 1)
+                    count += 1
+                    self.take_gui(img)
+            except:
+                messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "json_to_buff任务已完成")
 
@@ -64,15 +67,18 @@ class Format:
                 output_str = json.dumps(data)           # 将数据转换为字符串格式
                 with open(path, 'w') as f:              # 写入 TXT 文件
                     f.write(output_str)
-            if self.open_window:
-                image_bytes = np.asarray(
-                    bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                    dtype=np.uint8)
-                img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                img = cv2.resize(img, (1920, 1200))
-                img = self.add_progress(img, count, len(os.listdir(path)), 1)
-                count += 1
-                self.take_gui(img)
+            try:
+                if self.open_window:
+                    image_bytes = np.asarray(
+                        bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
+                        dtype=np.uint8)
+                    img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+                    img = cv2.resize(img, (1920, 1200))
+                    img = self.add_progress(img, count, len(os.listdir(path)), 1)
+                    count += 1
+                    self.take_gui(img)
+            except:
+                messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "json_to_txt任务已完成")
 
@@ -135,15 +141,18 @@ class Format:
                         allline.append(' '.join(items) + '\n')
                 with open(path + filename.split('.')[0] + ".txt", 'w') as f:
                     f.writelines(allline)
-                if self.open_window:
-                    image_bytes = np.asarray(
-                        bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                        dtype=np.uint8)
-                    img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                    img = cv2.resize(img, (1920, 1200))
-                    img = self.add_progress(img, count, len(os.listdir(path)), 1)
-                    count += 1
-                    self.take_gui(img)
+                try:
+                    if self.open_window:
+                        image_bytes = np.asarray(
+                            bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
+                            dtype=np.uint8)
+                        img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+                        img = cv2.resize(img, (1920, 1200))
+                        img = self.add_progress(img, count, len(os.listdir(path)), 1)
+                        count += 1
+                        self.take_gui(img)
+                except:
+                    messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "label_cut_xywh任务已完成")
 

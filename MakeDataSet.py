@@ -212,15 +212,18 @@ class DataSet:
             if old_name.endswith(self.get_img_format):
                 new_name = self.perfix + old_name  # 根据文件名格式生成新的文件名
                 os.rename(os.path.join(path, old_name), os.path.join(path, new_name))  # 重命名文件
-                if self.open_window:
-                    image_bytes = np.asarray(
-                        bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                        dtype=np.uint8)
-                    img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                    img = cv2.resize(img, (1920, 1200))
-                    img = self.add_progress(img, count, len(os.listdir(path)), 1)
-                    count += 1
-                    self.take_gui(img)
+                try:
+                    if self.open_window:
+                        image_bytes = np.asarray(
+                            bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
+                            dtype=np.uint8)
+                        img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+                        img = cv2.resize(img, (1920, 1200))
+                        img = self.add_progress(img, count, len(os.listdir(path)), 1)
+                        count += 1
+                        self.take_gui(img)
+                except:
+                    messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "rename_file任务已完成")
 
