@@ -5,7 +5,7 @@ import os
 
 class DEcompress:
     def __init__(self):
-        self.save_path = 'D:/MYproject/ZYscript/test/'
+        self.save_path = 'D:/MYproject/ZYscript/_internal/'
 # 尝试解包安装.whl文件
 
     def decompress_package(self, path):
@@ -29,11 +29,11 @@ class DEcompress:
         format_entry.pack(pady=10)
 
         def on_submit():                                    # 创建提交按钮
-            self.format = format_entry.get() if format_entry.get() else self.save_path
+            self.save_path = format_entry.get() if format_entry.get() else self.save_path
             getpath.destroy()                          # 关闭输入窗口
         tk.Button(getpath, text="提交", command=on_submit, width=20, bg="lightblue").pack(pady=10)
         getpath.wait_window()
 
 
-# Decompress().decompress_package('20')
+# DEcompress().decompress_package('D:/MYproject/ZYscript/test/')
 
