@@ -7,6 +7,7 @@
 !/EXpandData.py
 !/GetParameters.py
 !/MakeDataset.py
+!/DeCompress.py
 !/NeuralNetwork.py
 !/test.py
 !/README.md
