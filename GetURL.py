@@ -5,6 +5,6 @@ CODE_URL = {'GetParameters': 'https://raw.githubusercontent.com/zyradar/ZYScript
             'MakeDataSet': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/MakeDataSet.py',
             'CheckData': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/CheckData.py',
             'Crawler': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/Crawler.py',
-            'NeuralNetwork.py': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/NeuralNetwork.py',
-            'DeCompress.py': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/DeCompress.py',
+            'NeuralNetwork': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/NeuralNetwork.py',
+            'DeCompress': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/DeCompress.py',
             'UI': 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/UI.py'}
