@@ -5,6 +5,8 @@ from MakeDataSet import *
 from CheckData import *
 from Crawler import *
 from GetParameters import set_windowstate
+from NeuralNetwork import *
+from DeCompress import*
 
 def open_CopyPaste():
     main_menu.pack_forget()
@@ -48,11 +50,32 @@ def open_Crawler():
     moudle_name = '爬虫'
 
 
-def open_Model():
+def open_NeuralNetwork():
     main_menu.pack_forget()
-    Model.pack()
+    NeuralNetwork.pack()
     global moudle_name
     moudle_name = '神经网络'
+
+def open_Decompress():
+    main_menu.pack_forget()
+    Decompress.pack()
+    global moudle_name
+    moudle_name = '解压压缩'
+
+def open_CheckUpdate():
+    main_menu.pack_forget()
+    CheckUpdate.pack()
+    messagebox.showwarning("温馨提示", "因版本更新所下载的安装包,将保存在./site_package文件夹下。可在run.log文件中查看安装信息,"
+                                   "其中记录安装包名及其下载地址。若在更新过程中安装包下载失败，可自行手动打开下载链接，将目标库下载到./site_package文件夹下。"
+                                   "若在更新过程中安装包已成功下载，但在安装过程中失败，可手动将./site_package中的安装包，解压到./_internal中。再次尝试打开该系统即可")
+    global moudle_name
+    moudle_name = '检查更新'
+
+def open_deepseek():
+    main_menu.pack_forget()
+    Deepseek.pack()
+    global moudle_name
+    moudle_name = 'deepseek'
 
 
 def return_to_main_menu():
@@ -68,7 +91,7 @@ def return_to_Module():
 def submit_input():
     user_input = UI_input[call_name].get()  # 获取用户输入内容
     if call_name == 'grawler_image':
-        messagebox.showwarning('警告！！！！！', '骗你的，grawler_image没有加入搜索引擎功能，developer懒得加进来了，developer要睡大觉打游戏'
+        messagebox.showwarning('警告！！！！！', '骗你的，grawler_image没有加入搜索引擎功能，developer懒得加进来了，'
                                '自己在后面弹出的设置界面手动输入网址，也能爬取图片，点开任意图片，复制图片地址输入即可'
                                '此系统皆对所有图片进行了高质量处理，提高保存图片的质量')
     if user_input:
@@ -452,6 +475,81 @@ def call_grawler_image():
     call_name = 'grawler_image'
 
 
+def call_identify_hand():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(identify_hand, text="该模块为神经网络识别人手模块\n输入框无要求，可随意输入字符\n输入字符无任何含义\n"
+                                              "仅作为启动该功能的触发器\n启动功能时请打开电脑摄像头且将手部伸出置于摄像头前\n"
+                                              "启动功能后单击键盘esc,再用鼠标单机图像窗口的X即可退出此功能", font=("Arial", 14))
+    show_label.pack(pady=10)
+    identify_hand.pack()
+    global call_name
+    call_name = 'identify_hand'
+
+
+# def Call_No1():
+#     main_entry[moudle_name].pack_forget()
+#
+#
+# def Call_No2():
+#     main_entry[moudle_name].pack_forget()
+#
+#
+# def Call_No3():
+#     main_entry[moudle_name].pack_forget()
+#
+#
+# def Call_No4():
+#     main_entry[moudle_name].pack_forget()
+#
+#
+# def Call_No5():
+#     main_entry[moudle_name].pack_forget()
+
+
+def call_identify_face():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(identify_face, text="该模块为神经网络识别人脸模块\n输入框无要求，可随意输入字符\n输入字符无任何含义\n"
+                                              "仅作为启动该功能的触发器\n启动功能时请打开电脑摄像头且将脸部伸出置于摄像头前\n"
+                                              "启动功能后单击键盘esc,再用鼠标单机图像窗口的X即可退出此功能", font=("Arial", 14))
+    show_label.pack(pady=10)
+    identify_face.pack()
+    global call_name
+    call_name = 'identify_face'
+
+
+def call_decompress_package():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(decompress_package, text="请输入需要解压缩的包路径\n可输入文件夹路径批量解压多个文件\n如:C:/work/roi/\n"
+                          "也可输入单个路径解压单个文件\n如:C:/work/roi/3.zip\n此功能将会对目标文件进行解压缩", font=("Arial", 20))
+    show_label.pack(pady=10)
+    decompress_package.pack()
+    global call_name
+    call_name = 'decompress_package'
+
+
+def call_check_update():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(check_update, text="请输入'y,125.0.0.1:1230'的格式\n即’(是否开启代理),(你的代理IP)‘\n"
+                                             "中间要用逗号(英文字符)隔开\n(是否开启代理)可填y或Y或n或N\n(你的代理IP)需要参照格式示例填写\n"
+                                             "此功能将会检查版本更新\n获取版本信息，并且介绍版本更新内容", font=("Arial", 20))
+    show_label.pack(pady=10)
+    check_update.pack()
+    global call_name
+    call_name = 'check_update'
+
+
 def ack_window():
     input_window = tk.Toplevel()
     input_window.geometry("300x200")
@@ -490,26 +588,73 @@ def ack_window():
     input_window.wait_window()                          # 等待直到输入窗口关闭
 
 
+def checkupdate(state):
+    version_URL = 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/version.txt'
+    Tip_URL = 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/Update%20Tip.txt'
+    flag, proxy = state.split(',')
+    flag, proxy = flag.strip(' '), proxy.strip(' ')
+    proxies = None
+    with open('./_internal/version.txt', 'a+', encoding="utf-8") as f:
+        f.seek(0)
+        local_version = f.readlines()
+    local_version = local_version[0]
+    while flag:
+        try:
+            if flag == 'y' or flag == 'Y':
+                proxies = {'http': 'http://' + proxy, 'https': 'http://' + proxy}
+                version_response = requests.get(version_URL, proxies=proxies)
+                tip_response = requests.get(Tip_URL, proxies=proxies)
+                flag = None
+            elif flag == 'n' or flag == 'N':
+                version_response = requests.get(version_URL)
+                tip_response = requests.get(Tip_URL)
+                flag = None
+            else:
+                messagebox.showwarning("警告!!!", '用户输入信息不符合规则!!!\n请按照提示输入信息!!!')
+                break
+            if version_response.status_code == 200 and tip_response.status_code == 200:
+                version = version_response.text
+                tip = tip_response.text
+            messagebox.showwarning("版本内容", f'当前版本为:{local_version}\n最新版本为:{version}\n{tip}')
+        except:
+            messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
+                                           '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
+                                           '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
+
+
 root = tk.Tk()                                                          # 创建主窗口
 root.title("DATA TOOL")
-root.geometry("800x800")                                                # 窗口大小
+root.geometry("800x900")                                                # 窗口大小
 main_menu = tk.Frame(root)                                              # 主菜单界面
-tk.Label(main_menu, text="MENU", font=("Arial", 16)).pack(pady=10)
-main_btn = ["贴图裁剪", "数据增强", "转换格式", "制作数据集", "检查数据集", '爬虫', '神经网络', "退出"]
-main_function = [open_CopyPaste, open_ExpandData, open_ConvertFormat, open_MakeDataset, open_CheckData, open_Crawler, open_Model, quit_app]
-CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, Crawler, Model =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-module_call = [CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, Crawler, Model]
+tk.Label(main_menu, text="MENU", font=("Arial", 18)).grid(row=0, column=1, columnspan=1, pady=10, padx=0)
+main_btn = ["贴图裁剪", "数据增强", "转换格式", "制作数据集", "检查数据集", '无权限', '无权限', '无权限', '爬虫', '神经网络',
+            'deepseek', '无权限', '无权限', '无权限', '解压压缩', '检查更新', "退出"]
+main_function = [open_CopyPaste, open_ExpandData, open_ConvertFormat, open_MakeDataset, open_CheckData, None, None, None,
+                 open_Crawler, open_NeuralNetwork, open_deepseek, None, None, None,
+                 open_Decompress, open_CheckUpdate, quit_app]
+CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, Crawler, NeuralNetwork, Deepseek, Decompress, CheckUpdate =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+module_call = [CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, Crawler, NeuralNetwork, Deepseek, Decompress, CheckUpdate]
 main_entry = {}
 show_label = None
 # 主菜单按钮
+column, row = 0, 0
+li = [0, 1, 2, 3, 4, 8, 9, 10, 14, 15, 16]
 for i in range(len(main_function)):
+    if i % 3 == 0:
+        column = 0
+        row += 1
+    else:
+        column += 1
     # 父容器，按钮文本，按钮点击时调用的函数，按钮宽度，按钮背景颜色
-    btn_main = tk.Button(main_menu, text=main_btn[i], command=main_function[i], width=20, bg="lightblue")
-    btn_main.pack(pady=10)                                              # 按钮大小
+    tk.Button(main_menu, text=main_btn[i], command=main_function[i], width=16, bg="lightblue",
+                         font=("Arial", 16)).grid(row=row, column=column, columnspan=1, pady=10, padx=0)
     if i < len(module_call):
-        main_entry[main_btn[i]] = module_call[i]
-        tk.Label(module_call[i], text="Please select the function you want to use", font=("Arial", 14)).pack(pady=10)
+        main_entry[main_btn[li[i]]] = module_call[i]
+        if i == 7:
+            tk.Label(module_call[i], text="无权限", font=("Arial", 20)).pack(pady=60)
+        else:
+            tk.Label(module_call[i], text="Please select the function you want to use", font=("Arial", 20)).pack(pady=60)
 
 
 CopyPaste_call = ['ROI_buff', 'ROI_armor', 'ROI_rock', "ROI_to_ground",  "返回上一级菜单"]
@@ -533,16 +678,29 @@ CheckData_function = [call_check_txt, call_check_imgsize, call_check_buffdata,
 Crawler_call = ["grawler_text", "grawler_image", "返回上一级菜单"]
 Crawler_function = [call_grawler_text, call_grawler_image, return_to_main_menu]
 
-Model_call = ["返回上一级菜单"]
-Model_function = [return_to_main_menu]
+# NeuralNetwork_call = ["identify_hand", "identify_face", "返回上一级菜单"]
+# NeuralNetwork_function = [call_identify_hand, call_identify_face, return_to_main_menu]
+NeuralNetwork_call = ["identify_hand", '无权限', '无权限', '无权限', '无权限', '无权限', "返回上一级菜单"]
+NeuralNetwork_function = [call_identify_hand, None, None, None, None, None, return_to_main_menu]
 
-All_call = [CopyPaste_call, ExpandData_call, ConvertFormat_call, MakeDataset_call, CheckData_call, Crawler_call, Model_call]
-All_function = [CopyPaste_function, ExpandData_function, ConvertFormat_function, MakeDataset_function, CheckData_function, Crawler_function, Model_function]
+Deepseek_call = ["返回上一级菜单"]
+Deepseek_function = [return_to_main_menu]
+
+Decompress_call = ['decompress_package', '无权限', '无权限', '无权限', '无权限', '无权限', "返回上一级菜单"]
+Decompress_function = [call_decompress_package, None, None, None, None, None, return_to_main_menu]
+
+CheckUpdate_call = ['check_update', "返回上一级菜单"]
+CheckUpdate_function = [call_check_update, return_to_main_menu]
+
+All_call = [CopyPaste_call, ExpandData_call, ConvertFormat_call, MakeDataset_call, CheckData_call, Crawler_call,
+            NeuralNetwork_call, Deepseek_call, Decompress_call, CheckUpdate_call]
+All_function = [CopyPaste_function, ExpandData_function, ConvertFormat_function, MakeDataset_function,
+                CheckData_function, Crawler_function, NeuralNetwork_function, Deepseek_function, Decompress_function, CheckUpdate_function]
 # MakeDataset菜单按钮
 for i in range(len(module_call)):
     for k in range(len(All_call[i])):
         btn_submit_MakeDataset = tk.Button(module_call[i], text=All_call[i][k], command=All_function[i][k], width=20,
-                                           bg="lightblue")
+                                           font=("Arial", 20), bg="lightblue")
         btn_submit_MakeDataset.pack(pady=10)
 
 ROI_buff, ROI_armor, ROI_rock, ROI_to_ground, to_CopyPaste =\
@@ -567,10 +725,21 @@ CheckData_submeum = [check_txt, check_imgsize, check_buffdata, check_armordata, 
 grawler_text, grawler_image, to_Crawler = tk.Frame(root), tk.Frame(root), tk.Frame(root)
 Crawler_submeum = [grawler_text, grawler_image, to_Crawler]
 
-to_Model = tk.Frame(root)
-Model_submeum = [to_Model]
+identify_hand, identify_face, to_NeuralNetwork = tk.Frame(root), tk.Frame(root), tk.Frame(root)
+# NeuralNetwork_submeum = [identify_hand, identify_face, to_NeuralNetwork]
+NeuralNetwork_submeum = [identify_hand, None, None, None, None, None, to_NeuralNetwork]
 
-ALL_submeum = [CopyPaste_submeum, ExpandData_submeum, ConvertFormat_submeum, MakeDataset_submeum, CheckData_submeum, Crawler_submeum, Model_submeum]
+to_Deepseek = tk.Frame(root)
+Deepseek_submeum = [to_Deepseek]
+
+decompress_package, to_Decompress = tk.Frame(root), tk.Frame(root)
+Decompress_submeum = [decompress_package, None, None, None, None, None, to_Decompress]
+
+check_update, to_CheckUpdate = tk.Frame(root), tk.Frame(root)
+CheckUpdate_submeum = [check_update, to_CheckUpdate]
+
+ALL_submeum = [CopyPaste_submeum, ExpandData_submeum, ConvertFormat_submeum, MakeDataset_submeum, CheckData_submeum,
+               Crawler_submeum, NeuralNetwork_submeum, Deepseek_submeum, Decompress_submeum, CheckUpdate_submeum]
 UI_input = {}
 Module_entry = {}
 All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, COPYPaste().ROI_to_ground],
@@ -578,37 +747,36 @@ All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, C
            [Format().json_to_buff, Format().json_to_txt, Format().label_add_xywh, Format().label_cut_xywh],
            [DataSet().video_to_daset, DataSet().image_to_video, DataSet().montage_video, DataSet().connect_video, DataSet().modify_classes, DataSet().rename_file],
            [CheckDaset().check_txt, CheckDaset().check_imgsize, CheckDaset().check_buffdata, CheckDaset().check_armordata, CheckDaset().check_rockdata],
-           [CRawler().grawler_text, CRawler().grawler_image]]
+           [CRawler().grawler_text, CRawler().grawler_image],
+           [Network().identify_hand, None, None, None, None, None],
+           # [Network().identify_hand, Network().identify_face],
+           [1, None, None, None, None, None],
+           [DEcompress().decompress_package],
+           [checkupdate]]
 run_function = {}
 
 # 功能子菜单
 for i in range(len(All_call)):
     for k in range(len(All_call[i])):
+        if i == 6 and k not in (0, 6):
+            continue
+        if i == 8 and k not in (0, 6):
+            continue
         if k < len(All_call[i]) - 1:
             run_function[All_call[i][k]] = All_run[i][k]
         Module_entry[All_call[i][k]] = ALL_submeum[i][k]
-        UI_input[All_call[i][k]] = tk.Entry(ALL_submeum[i][k], width=30, font=("Arial", 12))
+        UI_input[All_call[i][k]] = tk.Entry(ALL_submeum[i][k], width=30, font=("Arial", 20))
         UI_input[All_call[i][k]].pack(pady=10)
-        btn_submit = tk.Button(ALL_submeum[i][k], text="提交", command=submit_input, width=20, bg="lightblue")
+        btn_submit = tk.Button(ALL_submeum[i][k], text="提交", command=submit_input, width=20, font=("Arial", 20), bg="lightblue")
         btn_submit.pack(pady=10)
-        btn_back = tk.Button(ALL_submeum[i][k], text="返回上一级菜单", command=return_to_Module, width=20, bg="lightgray")
+        btn_back = tk.Button(ALL_submeum[i][k], text="返回上一级菜单", command=return_to_Module, width=20, font=("Arial", 20), bg="lightgray")
         btn_back.pack(pady=10)
 
 main_menu.pack()           # 默认显示主菜单
-tk.Label(main_menu, text="未经开发者允许，严禁转载此工具，违者后果自负！\n如有疑问或发现bug，以及提出改进意见，\n请致信1795438624@qq.com反馈。\n"
-                         "开发者将十分感激获得您的宝贵反馈。", font=("Arial", 18)).pack(pady=120)
+tk.Label(main_menu, text="对于新用户请务必点击检查更新\n仔细阅读更新相关提示", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=50, padx=0)
+tk.Label(main_menu, text="未经开发者允许,\n严禁转载此工具,\n违者后果自负!\n如有疑问或发现bug,\n以及提出改进意见,\n请致信1795438624@qq.com反馈。\n"
+         "开发者将十分感激获得您的宝贵反馈。\n", font=("Arial", 16)).grid(row=int(len(main_btn)/3)+4, column=1, columnspan=1, pady=10, padx=0)
 messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
                                "再使用Ctrl+V粘贴到路径输入框中，将自动获取该文件路径，删去文件名以及扩展名即可获得此文件夹路径")
 messagebox.showwarning("注意！！", "为避免用户疲于输入参数和弹出窗口，后续所有需要输入的参数都可直接关闭弹出的输入窗口，只需输入路径，系统会自动使用确保程序正常运行的默认参数。")
 root.mainloop()            # 运行主循环
-
-
-"""shutil.move(name[0] + ".txt", folder_path + "error/" + filename.split('.')[0] + ".txt")  # 在文件夹下创建一个txt文件
-os.makedirs(folder_path + "error/", exist_ok=True)   # 创建文件夹
-root = tk.Tk()
-root.withdraw()  # 隐藏主窗口
-a = simpledialog.askstring("输入", "请输入您的名字:")
-# 发送HTTP请求并获取图像内容
-image_bytes = np.asarray(bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content), dtype=np.uint8)
-# 解码图像数据
-image = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)"""
