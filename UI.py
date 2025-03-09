@@ -7,6 +7,7 @@ from Crawler import *
 from GetParameters import set_windowstate
 from NeuralNetwork import *
 from DeCompress import*
+from tkinter import filedialog
 
 def open_CopyPaste():
     main_menu.pack_forget()
@@ -56,11 +57,13 @@ def open_NeuralNetwork():
     global moudle_name
     moudle_name = '神经网络'
 
+
 def open_Decompress():
     main_menu.pack_forget()
     Decompress.pack()
     global moudle_name
     moudle_name = '解压压缩'
+
 
 def open_CheckUpdate():
     main_menu.pack_forget()
@@ -70,6 +73,7 @@ def open_CheckUpdate():
                                    "若在更新过程中安装包已成功下载，但在安装过程中失败，可手动将./site_package中的安装包，解压到./_internal中。再次尝试打开该系统即可")
     global moudle_name
     moudle_name = '检查更新'
+
 
 def open_deepseek():
     main_menu.pack_forget()
@@ -88,7 +92,20 @@ def return_to_Module():
     main_entry[moudle_name].pack()          # 回到上一级菜单
 
 
-def submit_input():
+def jump_to_main_menu():
+    Module_entry[call_name].pack_forget()   # 隐藏所有子菜单
+    main_entry[moudle_name].pack_forget()   # 隐藏所有模块菜单
+    main_menu.pack()
+
+
+def select_path():
+    folder_selected = filedialog.askdirectory()  # 打开文件夹选择对话框
+    if folder_selected:
+        UI_input[call_name].delete(0, tk.END)  # 清空已有内容
+        UI_input[call_name].insert(0, folder_selected)  # 插入选定路径
+
+
+def submit_input(event=None):
     user_input = UI_input[call_name].get()  # 获取用户输入内容
     if call_name == 'grawler_image':
         messagebox.showwarning('警告！！！！！', '骗你的，grawler_image没有加入搜索引擎功能，developer懒得加进来了，'
@@ -489,26 +506,6 @@ def call_identify_hand():
     call_name = 'identify_hand'
 
 
-# def Call_No1():
-#     main_entry[moudle_name].pack_forget()
-#
-#
-# def Call_No2():
-#     main_entry[moudle_name].pack_forget()
-#
-#
-# def Call_No3():
-#     main_entry[moudle_name].pack_forget()
-#
-#
-# def Call_No4():
-#     main_entry[moudle_name].pack_forget()
-#
-#
-# def Call_No5():
-#     main_entry[moudle_name].pack_forget()
-
-
 def call_identify_face():
     main_entry[moudle_name].pack_forget()
     global show_label
@@ -541,7 +538,7 @@ def call_check_update():
     global show_label
     if show_label:
         show_label.destroy()
-    show_label = tk.Label(check_update, text="请输入'y,125.0.0.1:1230'的格式\n即’(是否开启代理),(你的代理IP)‘\n"
+    show_label = tk.Label(check_update, text="请输入'y,125.0.0.1:1230'的格式\n即’(是否开启代理),(你的代理IP)‘\n若未开启代理则填入‘n,n’\n"
                                              "中间要用逗号(英文字符)隔开\n(是否开启代理)可填y或Y或n或N\n(你的代理IP)需要参照格式示例填写\n"
                                              "此功能将会检查版本更新\n获取版本信息，并且介绍版本更新内容", font=("Arial", 20))
     show_label.pack(pady=10)
@@ -620,6 +617,7 @@ def checkupdate(state):
             messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
                                            '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
                                            '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
+            break
 
 
 root = tk.Tk()                                                          # 创建主窗口
@@ -767,13 +765,18 @@ for i in range(len(All_call)):
         Module_entry[All_call[i][k]] = ALL_submeum[i][k]
         UI_input[All_call[i][k]] = tk.Entry(ALL_submeum[i][k], width=30, font=("Arial", 20))
         UI_input[All_call[i][k]].pack(pady=10)
+        UI_input[All_call[i][k]].bind("<Return>", submit_input)
+        if i != 9:
+            tk.Button(ALL_submeum[i][k], text="浏览", font=("Arial", 18), command=select_path, width=10, bg="lightblue").pack(pady=10, padx=5)
         btn_submit = tk.Button(ALL_submeum[i][k], text="提交", command=submit_input, width=20, font=("Arial", 20), bg="lightblue")
         btn_submit.pack(pady=10)
         btn_back = tk.Button(ALL_submeum[i][k], text="返回上一级菜单", command=return_to_Module, width=20, font=("Arial", 20), bg="lightgray")
         btn_back.pack(pady=10)
+        tk.Button(ALL_submeum[i][k], text="返回主菜单", command=jump_to_main_menu, width=20, font=("Arial", 20),bg="lightgray").pack(pady=10)
 
 main_menu.pack()           # 默认显示主菜单
-tk.Label(main_menu, text="对于新用户请务必点击检查更新\n仔细阅读更新相关提示", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=50, padx=0)
+tk.Label(main_menu, text="对于新用户请务必点击检查更新\n仔细阅读更新相关提示\nrun.log文件中将记录系统的运行日志,\n可在日志文件中查看系统运行状况\n"
+                         "日志内容过多时用户可随意删除日志信息,\n但不可删除日志文件", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=20, padx=0)
 tk.Label(main_menu, text="未经开发者允许,\n严禁转载此工具,\n违者后果自负!\n如有疑问或发现bug,\n以及提出改进意见,\n请致信1795438624@qq.com反馈。\n"
          "开发者将十分感激获得您的宝贵反馈。\n", font=("Arial", 16)).grid(row=int(len(main_btn)/3)+4, column=1, columnspan=1, pady=10, padx=0)
 messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
