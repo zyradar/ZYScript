@@ -680,8 +680,8 @@ Crawler_function = [call_grawler_text, call_grawler_image, return_to_main_menu]
 
 # NeuralNetwork_call = ["identify_hand", "identify_face", "返回上一级菜单"]
 # NeuralNetwork_function = [call_identify_hand, call_identify_face, return_to_main_menu]
-NeuralNetwork_call = ["identify_hand", '无权限', '无权限', '无权限', '无权限', '无权限', "返回上一级菜单"]
-NeuralNetwork_function = [call_identify_hand, None, None, None, None, None, return_to_main_menu]
+NeuralNetwork_call = ["identify_hand", 'identify_face', '无权限', '无权限', '无权限', '无权限', "返回上一级菜单"]
+NeuralNetwork_function = [call_identify_hand, call_identify_face, None, None, None, None, return_to_main_menu]
 
 Deepseek_call = ["返回上一级菜单"]
 Deepseek_function = [return_to_main_menu]
@@ -727,7 +727,7 @@ Crawler_submeum = [grawler_text, grawler_image, to_Crawler]
 
 identify_hand, identify_face, to_NeuralNetwork = tk.Frame(root), tk.Frame(root), tk.Frame(root)
 # NeuralNetwork_submeum = [identify_hand, identify_face, to_NeuralNetwork]
-NeuralNetwork_submeum = [identify_hand, None, None, None, None, None, to_NeuralNetwork]
+NeuralNetwork_submeum = [identify_hand, identify_face, None, None, None, None, to_NeuralNetwork]
 
 to_Deepseek = tk.Frame(root)
 Deepseek_submeum = [to_Deepseek]
@@ -748,7 +748,7 @@ All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, C
            [DataSet().video_to_daset, DataSet().image_to_video, DataSet().montage_video, DataSet().connect_video, DataSet().modify_classes, DataSet().rename_file],
            [CheckDaset().check_txt, CheckDaset().check_imgsize, CheckDaset().check_buffdata, CheckDaset().check_armordata, CheckDaset().check_rockdata],
            [CRawler().grawler_text, CRawler().grawler_image],
-           [Network().identify_hand, None, None, None, None, None],
+           [Network().identify_hand, Network().identify_face, None, None, None, None],
            # [Network().identify_hand, Network().identify_face],
            [1, None, None, None, None, None],
            [DEcompress().decompress_package],
@@ -758,7 +758,7 @@ run_function = {}
 # 功能子菜单
 for i in range(len(All_call)):
     for k in range(len(All_call[i])):
-        if i == 6 and k not in (0, 6):
+        if i == 6 and k not in (0, 1, 6):
             continue
         if i == 8 and k not in (0, 6):
             continue
