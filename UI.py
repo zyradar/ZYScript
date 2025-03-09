@@ -614,9 +614,12 @@ def checkupdate(state):
                 tip = tip_response.text
             messagebox.showwarning("版本内容", f'当前版本为:{local_version}\n最新版本为:{version}\n{tip}')
         except:
-            messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
-                                           '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
-                                           '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
+            if printupdate:
+                messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
+                                               '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
+                                               '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
+            else:
+                messagebox.showwarning("温馨提示", '本系统版本已经更新，暂无法访问更新信息，请自行前往检查更新模块中查询更新信息！')
             break
 
 
@@ -782,4 +785,8 @@ tk.Label(main_menu, text="未经开发者允许,\n严禁转载此工具,\n违者
 messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
                                "再使用Ctrl+V粘贴到路径输入框中，将自动获取该文件路径，删去文件名以及扩展名即可获得此文件夹路径")
 messagebox.showwarning("注意！！", "为避免用户疲于输入参数和弹出窗口，后续所有需要输入的参数都可直接关闭弹出的输入窗口，只需输入路径，系统会自动使用确保程序正常运行的默认参数。")
+printupdate = False
+checkupdate('n,n')
+printupdate = True
 root.mainloop()            # 运行主循环
+
