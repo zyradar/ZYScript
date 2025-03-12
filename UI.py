@@ -103,9 +103,10 @@ def open_Decompress():
 def open_CheckUpdate():
     main_menu.pack_forget()
     CheckUpdate.pack()
-    messagebox.showwarning("温馨提示", "因版本更新所下载的安装包,将保存在./site_package文件夹下。可在run.log文件中查看安装信息,"
-                                   "其中记录安装包名及其下载地址。若在更新过程中安装包下载失败，可自行手动打开下载链接，将目标库下载到./site_package文件夹下。"
-                                   "若在更新过程中安装包已成功下载，但在安装过程中失败，可手动将./site_package中的安装包，解压到./_internal中。再次尝试打开该系统即可")
+    if isupdate:
+        messagebox.showwarning("温馨提示", "因版本更新所下载的安装包,将保存在./site_package文件夹下。可在run.log文件中查看安装信息,"
+                                       "其中记录安装包名及其下载地址。若在更新过程中安装包下载失败，可自行手动打开下载链接，将目标库下载到./site_package文件夹下。"
+                                       "若在更新过程中安装包已成功下载，但在安装过程中失败，可手动将./site_package中的安装包，解压到./_internal中。再次尝试打开该系统即可")
     global moudle_name
     moudle_name = '检查更新'
 
@@ -609,6 +610,20 @@ def call_check_update():
     call_name = 'check_update'
 
 
+def call_update_history():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(update_history, text="请输入'y,125.0.0.1:1230'的格式\n即’(是否开启代理),(你的代理IP)‘\n若未开启代理则填入‘n,n’\n"
+                          "中间要用逗号(英文字符)隔开\n(是否开启代理)可填y或Y或n或N\n(你的代理IP)需要参照格式示例填写\n"
+                          "此功能将会获取版本历史信息\n，并以文本文件的形式，\n记录到此系统文件夹下,可前往查看", font=("Arial", 20))
+    show_label.pack(pady=10)
+    update_history.pack()
+    global call_name
+    call_name = 'update_history'
+
+
 def ack_window():
     input_window = tk.Toplevel()
     input_window.geometry("300x200")
@@ -652,7 +667,6 @@ def checkupdate(state):
     Tip_URL = 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/Update%20Tip.txt'
     flag, proxy = state.split(',')
     flag, proxy = flag.strip(' '), proxy.strip(' ')
-    proxies = None
     with open('./_internal/version.txt', 'a+', encoding="utf-8") as f:
         f.seek(0)
         local_version = f.readlines()
@@ -676,12 +690,42 @@ def checkupdate(state):
                 tip = tip_response.text
             messagebox.showwarning("版本内容", f'当前版本为:{local_version}\n最新版本为:{version}\n{tip}')
         except:
-            # if printupdate:
-            #     messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
-            #                                    '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
-            #                                    '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
-            # else:
-            #     messagebox.showwarning("温馨提示", '本系统版本已经更新，暂无法访问更新信息，请自行前往检查更新模块中查询更新信息！')
+            if isupdate:
+                messagebox.showwarning("温馨提示", '本系统版本已经更新，暂无法访问更新信息，请自行前往检查更新模块中查询更新信息！')
+            else:
+                messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
+                                               '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
+                                               '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
+            break
+
+
+def updatehistory(state):
+    history_URL = 'https://raw.githubusercontent.com/zyradar/ZYScript/TestScritpt/Update%20history.txt'
+    flag, proxy = state.split(',')
+    flag, proxy = flag.strip(' '), proxy.strip(' ')
+    while flag:
+        try:
+            if flag == 'y' or flag == 'Y':
+                proxies = {'http': 'http://' + proxy, 'https': 'http://' + proxy}
+                history_response = requests.get(history_URL, proxies=proxies)
+                flag = None
+            elif flag == 'n' or flag == 'N':
+                history_response = requests.get(history_URL)
+                flag = None
+            else:
+                messagebox.showwarning("警告!!!", '用户输入信息不符合规则!!!\n请按照提示输入信息!!!')
+                break
+            if history_response.status_code == 200:
+                history = history_response.text
+                with open('./Update history.txt', 'w') as f:
+                    f.close()
+                with open('./Update history.txt', 'a+', encoding='utf-8') as f:
+                    f.write(history)
+            messagebox.showwarning("版本历史", f'{history}')
+        except:
+            messagebox.showwarning("注意!!", '无法获取版本历史!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
+                                           '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
+                                           '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
             break
 
 
@@ -787,10 +831,10 @@ decompress_package, to_Decompress = tk.Frame(root), tk.Frame(root)
 Decompress_submeum = [decompress_package, None, None, None, None, None, to_Decompress]
 
 
-CheckUpdate_call = ['check_update', "返回上一级菜单"]
-CheckUpdate_function = [call_check_update, return_to_main_menu]
-check_update, to_CheckUpdate = tk.Frame(root), tk.Frame(root)
-CheckUpdate_submeum = [check_update, to_CheckUpdate]
+CheckUpdate_call = ['check_update', 'update_history', "返回上一级菜单"]
+CheckUpdate_function = [call_check_update, call_update_history, return_to_main_menu]
+check_update, update_history, to_CheckUpdate = tk.Frame(root), tk.Frame(root), tk.Frame(root)
+CheckUpdate_submeum = [check_update, update_history, to_CheckUpdate]
 
 
 UI_input = {}
@@ -814,7 +858,7 @@ All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, C
            [Network().identify_hand, Network().identify_face, None, None, None, None],
            [1, None, None, None, None, None],
            [DEcompress().decompress_package],
-           [checkupdate]]
+           [checkupdate, updatehistory]]
 
 # MakeDataset菜单按钮
 for i in range(len(module_call)):
@@ -849,12 +893,24 @@ tk.Label(main_menu, text="对于新用户请务必点击检查更新\n仔细阅�
                          "日志内容过多时用户可随意删除日志信息,\n但不可删除日志文件", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=20, padx=0)
 tk.Label(main_menu, text="未经开发者允许,\n严禁转载此工具,\n违者后果自负!\n如有疑问或发现bug,\n以及提出改进意见,\n请致信1795438624@qq.com反馈。\n"
          "开发者将十分感激获得您的宝贵反馈。\n", font=("Arial", 16)).grid(row=int(len(main_btn)/3)+4, column=1, columnspan=1, pady=10, padx=0)
-# messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
-#                                "再使用Ctrl+V粘贴到路径输入框中，将自动获取该文件路径，删去文件名以及扩展名即可获得此文件夹路径")
-# messagebox.showwarning("注意！！", "为避免用户疲于输入参数和弹出窗口，后续所有需要输入的参数都可直接关闭弹出的输入窗口，只需输入路径，系统会自动使用确保程序正常运行的默认参数。")
-# printupdate = False
-# checkupdate('n,n')
-# printupdate = True
+
+with open('./autocheck_update.txt', 'a+') as f:
+    f.seek(0)
+    if not f.read():
+        messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
+                                       "再使用Ctrl+V粘贴到路径输入框中，将自动获取该文件路径，删去文件名以及扩展名即可获得此文件夹路径")
+        messagebox.showwarning("注意！！", "为避免用户疲于输入参数和弹出窗口，后续所有需要输入的参数都可直接关闭弹出的输入窗口，只需输入路径，系统会自动使用确保程序正常运行的默认参数。")
+        f.write('y')
+with open('./_internal/fixupdate.txt', 'a+') as f:
+    f.seek(0)
+    if f.read():
+        isupdate = True
+        checkupdate('n,n')
+    else:
+        isupdate = False
+if isupdate:
+    with open('./_internal/fixupdate.txt', 'w') as f:
+        f.close()
 root.protocol("WM_DELETE_WINDOW", quit_app)
 root.mainloop()            # 运行主循环
 
