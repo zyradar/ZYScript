@@ -9,6 +9,7 @@
 !/MakeDataset.py
 !/DeCompress.py
 !/NeuralNetwork.py
+!/SystemTool.py
 !/test.py
 !/README.md
 !/UI.py
@@ -18,3 +19,5 @@
 !/requirements.txt
 !/Update Tip.txt
 !/fixLuncher.txt
+!/Update history.txt
+!/ZY.bmp

@@ -7,6 +7,7 @@ from Crawler import *
 from GetParameters import set_windowstate
 from NeuralNetwork import *
 from DeCompress import*
+from SystemTool import *
 from tkinter import filedialog
 
 def open_CopyPaste():
@@ -42,6 +43,40 @@ def open_CheckData():
     CheckData.pack()
     global moudle_name
     moudle_name = '检查数据集'
+
+
+def open_SystemTools():
+    global password
+    password = None
+    askpassword = tk.Tk()
+    askpassword.geometry("400x300")
+    askpassword.title("权限获取")
+    askpermission = tk.Frame(askpassword)
+    askpermission.pack()
+    tk.Label(askpermission, text="您无使用权限\n请输入密码获取权限", font=("Arial", 18)).pack(pady=20)
+    password_entry = tk.Entry(askpermission, width=15, font=("Arial", 20))
+    password_entry.pack(pady=20)
+
+    def get_password(event=None):
+        getpassword = password_entry.get()
+        global password
+        if getpassword == 'zy666':
+            password = True
+        else:
+            messagebox.showwarning('温馨提示', '密码错误，无权限')
+            password = None
+        askpassword.destroy()
+
+    password_entry.bind("<Return>", get_password)
+    btn_submit = tk.Button(askpermission, text="提交", command=get_password, width=10, font=("Arial", 18), bg="lightblue")
+    btn_submit.pack(pady=20)
+    askpermission.wait_window()
+    if not password:
+        return None
+    main_menu.pack_forget()
+    SystemTools.pack()
+    global moudle_name
+    moudle_name = '系统工具'
 
 
 def open_Crawler():
@@ -128,7 +163,8 @@ def submit_input(event=None):
 
 
 def quit_app():
-    root.destroy()
+    if messagebox.askokcancel("退出确认", "你确定要关闭整个系统吗？"):
+        root.destroy()
 
 
 def call_ROI_buff():
@@ -441,6 +477,32 @@ def call_check_rockdata():
     call_name = 'check_rockdata'
 
 
+def call_find_empty_files():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(find_empty_files, text="请输入文件夹路径\n路径格式为’C:/Pictures/work/txt/‘\n"
+                                               "此功能将为您查找此磁盘内所有的空文件及其来源", font=("Arial", 14))
+    show_label.pack(pady=10)
+    find_empty_files.pack()
+    global call_name
+    call_name = 'find_empty_files'
+
+
+def call_find_empty_folders():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(find_empty_folders, text="请输入文件夹路径\n路径格式为’C:/Pictures/work/txt/‘\n"
+                                               "此功能将为您查找此磁盘内所有的空文件夹及其来源", font=("Arial", 14))
+    show_label.pack(pady=10)
+    find_empty_folders.pack()
+    global call_name
+    call_name = 'find_empty_folders'
+
+
 def call_grawler_text():
     main_entry[moudle_name].pack_forget()
     global show_label
@@ -614,12 +676,12 @@ def checkupdate(state):
                 tip = tip_response.text
             messagebox.showwarning("版本内容", f'当前版本为:{local_version}\n最新版本为:{version}\n{tip}')
         except:
-            if printupdate:
-                messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
-                                               '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
-                                               '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
-            else:
-                messagebox.showwarning("温馨提示", '本系统版本已经更新，暂无法访问更新信息，请自行前往检查更新模块中查询更新信息！')
+            # if printupdate:
+            #     messagebox.showwarning("注意!!", '无法获取版本信息!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
+            #                                    '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
+            #                                    '3.用户已启用代理且输入y或Y,y后的代理IP输入错误，请确认代理IP')
+            # else:
+            #     messagebox.showwarning("温馨提示", '本系统版本已经更新，暂无法访问更新信息，请自行前往检查更新模块中查询更新信息！')
             break
 
 
@@ -628,19 +690,19 @@ root.title("DATA TOOL")
 root.geometry("800x900")                                                # 窗口大小
 main_menu = tk.Frame(root)                                              # 主菜单界面
 tk.Label(main_menu, text="MENU", font=("Arial", 18)).grid(row=0, column=1, columnspan=1, pady=10, padx=0)
-main_btn = ["贴图裁剪", "数据增强", "转换格式", "制作数据集", "检查数据集", '无权限', '无权限', '无权限', '爬虫', '神经网络',
+main_btn = ["贴图裁剪", "数据增强", "转换格式", "制作数据集", "检查数据集", '无权限', '无权限', '系统工具', '爬虫', '神经网络',
             'deepseek', '无权限', '无权限', '无权限', '解压压缩', '检查更新', "退出"]
-main_function = [open_CopyPaste, open_ExpandData, open_ConvertFormat, open_MakeDataset, open_CheckData, None, None, None,
+main_function = [open_CopyPaste, open_ExpandData, open_ConvertFormat, open_MakeDataset, open_CheckData, None, None, open_SystemTools,
                  open_Crawler, open_NeuralNetwork, open_deepseek, None, None, None,
                  open_Decompress, open_CheckUpdate, quit_app]
-CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, Crawler, NeuralNetwork, Deepseek, Decompress, CheckUpdate =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-module_call = [CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, Crawler, NeuralNetwork, Deepseek, Decompress, CheckUpdate]
+CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, SystemTools, Crawler, NeuralNetwork, Deepseek, Decompress, CheckUpdate =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+module_call = [CopyPaste, ExpandData, ConvertFormat, MakeDataset, CheckData, SystemTools, Crawler, NeuralNetwork, Deepseek, Decompress, CheckUpdate]
 main_entry = {}
 show_label = None
 # 主菜单按钮
 column, row = 0, 0
-li = [0, 1, 2, 3, 4, 8, 9, 10, 14, 15, 16]
+li = [0, 1, 2, 3, 4, 7, 8, 9, 10, 14, 15, 16]
 for i in range(len(main_function)):
     if i % 3 == 0:
         column = 0
@@ -652,7 +714,7 @@ for i in range(len(main_function)):
                          font=("Arial", 16)).grid(row=row, column=column, columnspan=1, pady=10, padx=0)
     if i < len(module_call):
         main_entry[main_btn[li[i]]] = module_call[i]
-        if i == 7:
+        if i == 8:
             tk.Label(module_call[i], text="无权限", font=("Arial", 20)).pack(pady=60)
         else:
             tk.Label(module_call[i], text="Please select the function you want to use", font=("Arial", 20)).pack(pady=60)
@@ -660,43 +722,100 @@ for i in range(len(main_function)):
 
 CopyPaste_call = ['ROI_buff', 'ROI_armor', 'ROI_rock', "ROI_to_ground",  "返回上一级菜单"]
 CopyPaste_function = [call_ROI_buff, call_ROI_armor, call_ROI_rock, call_ROI_to_ground, return_to_main_menu]
+ROI_buff, ROI_armor, ROI_rock, ROI_to_ground, to_CopyPaste =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+CopyPaste_submeum = [ROI_buff, ROI_armor, ROI_rock, ROI_to_ground, to_CopyPaste]
+
 
 ExpandData_call = ['change_bright', 'brightData', 'AntiColor', "返回上一级菜单"]
 ExpandData_function = [call_change_bright, call_brightData, call_AntiColor, return_to_main_menu]
+change_bright, brightData, AntiColor, to_ExpandData = tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+ExpandData_submeum = [change_bright, brightData, AntiColor, to_ExpandData]
+
 
 ConvertFormat_call = ['json_to_buff', 'json_to_txt', 'label_add_xywh', 'label_cut_xywh', "返回上一级菜单"]
 ConvertFormat_function = [call_json_to_buff, call_json_to_txt, call_label_add_xywh, call_label_cut_xywh, return_to_main_menu]
+json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, to_ConvertFormat =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+ConvertFormat_submeum = [json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, to_ConvertFormat]
+
 
 MakeDataset_call = ["video_to_daset", "image_to_video", "montage_video", "connect_video",
                     "modify_classes", "rename_file", "返回上一级菜单"]
 MakeDataset_function = [call_video_to_daset, call_image_to_video, call_montage_video, call_connect_video,
                         call_modify_classes, call_rename_file, return_to_main_menu]
+video_to_daset, image_to_video, montage_video, connect_video, modify_classes, rename_file, to_MakeDataset =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+MakeDataset_submeum = [video_to_daset, image_to_video, montage_video, connect_video, modify_classes, rename_file, to_MakeDataset]
+
 
 CheckData_call = ["check_txt", "check_imgsize", "check_buffdata", "check_armordata", "check_rockdata", "返回上一级菜单"]
 CheckData_function = [call_check_txt, call_check_imgsize, call_check_buffdata,
                       call_check_armordata, call_check_rockdata, return_to_main_menu]
+check_txt, check_imgsize, check_armordata, check_rockdata, check_buffdata, to_CheckData =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+CheckData_submeum = [check_txt, check_imgsize, check_buffdata, check_armordata, check_rockdata, to_CheckData]
+
+
+SystemTools_call = ["find_empty_files", "find_empty_folders", "无权限", "无权限", "无权限", "无权限", "返回上一级菜单"]
+SystemTools_function = [call_find_empty_files, call_find_empty_folders, None, None, None, None, return_to_main_menu]
+find_empty_files, find_empty_folders, to_SystemTools = tk.Frame(root), tk.Frame(root), tk.Frame(root)
+SystemTools_submeum = [find_empty_files, find_empty_folders, None, None, None, None, to_SystemTools]
+
 
 Crawler_call = ["grawler_text", "grawler_image", "返回上一级菜单"]
 Crawler_function = [call_grawler_text, call_grawler_image, return_to_main_menu]
+grawler_text, grawler_image, to_Crawler = tk.Frame(root), tk.Frame(root), tk.Frame(root)
+Crawler_submeum = [grawler_text, grawler_image, to_Crawler]
 
-# NeuralNetwork_call = ["identify_hand", "identify_face", "返回上一级菜单"]
-# NeuralNetwork_function = [call_identify_hand, call_identify_face, return_to_main_menu]
+
 NeuralNetwork_call = ["identify_hand", 'identify_face', '无权限', '无权限', '无权限', '无权限', "返回上一级菜单"]
 NeuralNetwork_function = [call_identify_hand, call_identify_face, None, None, None, None, return_to_main_menu]
+identify_hand, identify_face, to_NeuralNetwork = tk.Frame(root), tk.Frame(root), tk.Frame(root)
+NeuralNetwork_submeum = [identify_hand, identify_face, None, None, None, None, to_NeuralNetwork]
+
 
 Deepseek_call = ["返回上一级菜单"]
 Deepseek_function = [return_to_main_menu]
+to_Deepseek = tk.Frame(root)
+Deepseek_submeum = [to_Deepseek]
+
 
 Decompress_call = ['decompress_package', '无权限', '无权限', '无权限', '无权限', '无权限', "返回上一级菜单"]
 Decompress_function = [call_decompress_package, None, None, None, None, None, return_to_main_menu]
+decompress_package, to_Decompress = tk.Frame(root), tk.Frame(root)
+Decompress_submeum = [decompress_package, None, None, None, None, None, to_Decompress]
+
 
 CheckUpdate_call = ['check_update', "返回上一级菜单"]
 CheckUpdate_function = [call_check_update, return_to_main_menu]
+check_update, to_CheckUpdate = tk.Frame(root), tk.Frame(root)
+CheckUpdate_submeum = [check_update, to_CheckUpdate]
 
-All_call = [CopyPaste_call, ExpandData_call, ConvertFormat_call, MakeDataset_call, CheckData_call, Crawler_call,
+
+UI_input = {}
+Module_entry = {}
+run_function = {}
+All_call = [CopyPaste_call, ExpandData_call, ConvertFormat_call, MakeDataset_call, CheckData_call, SystemTools_call, Crawler_call,
             NeuralNetwork_call, Deepseek_call, Decompress_call, CheckUpdate_call]
-All_function = [CopyPaste_function, ExpandData_function, ConvertFormat_function, MakeDataset_function,
-                CheckData_function, Crawler_function, NeuralNetwork_function, Deepseek_function, Decompress_function, CheckUpdate_function]
+All_function = [CopyPaste_function, ExpandData_function, ConvertFormat_function, MakeDataset_function, CheckData_function,
+                SystemTools_function, Crawler_function, NeuralNetwork_function, Deepseek_function, Decompress_function,
+                CheckUpdate_function]
+ALL_submeum = [CopyPaste_submeum, ExpandData_submeum, ConvertFormat_submeum, MakeDataset_submeum, CheckData_submeum,
+               SystemTools_submeum, Crawler_submeum, NeuralNetwork_submeum, Deepseek_submeum, Decompress_submeum,
+               CheckUpdate_submeum]
+All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, COPYPaste().ROI_to_ground],
+           [EXpandData().change_bright, EXpandData().brightData, EXpandData().AntiColor],
+           [Format().json_to_buff, Format().json_to_txt, Format().label_add_xywh, Format().label_cut_xywh],
+           [DataSet().video_to_daset, DataSet().image_to_video, DataSet().montage_video, DataSet().connect_video, DataSet().modify_classes, DataSet().rename_file],
+           [CheckDaset().check_txt, CheckDaset().check_imgsize, CheckDaset().check_buffdata, CheckDaset().check_armordata, CheckDaset().check_rockdata],
+           [Systemtool().find_empty_files, Systemtool().find_empty_folders, None, None, None, None],
+           [CRawler().grawler_text, CRawler().grawler_image],
+           [Network().identify_hand, Network().identify_face, None, None, None, None],
+           [1, None, None, None, None, None],
+           [DEcompress().decompress_package],
+           [checkupdate]]
+
 # MakeDataset菜单按钮
 for i in range(len(module_call)):
     for k in range(len(All_call[i])):
@@ -704,64 +823,12 @@ for i in range(len(module_call)):
                                            font=("Arial", 20), bg="lightblue")
         btn_submit_MakeDataset.pack(pady=10)
 
-ROI_buff, ROI_armor, ROI_rock, ROI_to_ground, to_CopyPaste =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-CopyPaste_submeum = [ROI_buff, ROI_armor, ROI_rock, ROI_to_ground, to_CopyPaste]
-
-json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, to_ConvertFormat =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-ConvertFormat_submeum = [json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, to_ConvertFormat]
-
-change_bright, brightData, AntiColor, to_ExpandData = tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-ExpandData_submeum = [change_bright, brightData, AntiColor, to_ExpandData]
-
-video_to_daset, image_to_video, montage_video, connect_video, modify_classes, rename_file, to_MakeDataset =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-MakeDataset_submeum = [video_to_daset, image_to_video, montage_video, connect_video, modify_classes, rename_file, to_MakeDataset]
-
-check_txt, check_imgsize, check_armordata, check_rockdata, check_buffdata, to_CheckData =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-CheckData_submeum = [check_txt, check_imgsize, check_buffdata, check_armordata, check_rockdata, to_CheckData]
-
-grawler_text, grawler_image, to_Crawler = tk.Frame(root), tk.Frame(root), tk.Frame(root)
-Crawler_submeum = [grawler_text, grawler_image, to_Crawler]
-
-identify_hand, identify_face, to_NeuralNetwork = tk.Frame(root), tk.Frame(root), tk.Frame(root)
-# NeuralNetwork_submeum = [identify_hand, identify_face, to_NeuralNetwork]
-NeuralNetwork_submeum = [identify_hand, identify_face, None, None, None, None, to_NeuralNetwork]
-
-to_Deepseek = tk.Frame(root)
-Deepseek_submeum = [to_Deepseek]
-
-decompress_package, to_Decompress = tk.Frame(root), tk.Frame(root)
-Decompress_submeum = [decompress_package, None, None, None, None, None, to_Decompress]
-
-check_update, to_CheckUpdate = tk.Frame(root), tk.Frame(root)
-CheckUpdate_submeum = [check_update, to_CheckUpdate]
-
-ALL_submeum = [CopyPaste_submeum, ExpandData_submeum, ConvertFormat_submeum, MakeDataset_submeum, CheckData_submeum,
-               Crawler_submeum, NeuralNetwork_submeum, Deepseek_submeum, Decompress_submeum, CheckUpdate_submeum]
-UI_input = {}
-Module_entry = {}
-All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, COPYPaste().ROI_to_ground],
-           [EXpandData().change_bright, EXpandData().brightData, EXpandData().AntiColor],
-           [Format().json_to_buff, Format().json_to_txt, Format().label_add_xywh, Format().label_cut_xywh],
-           [DataSet().video_to_daset, DataSet().image_to_video, DataSet().montage_video, DataSet().connect_video, DataSet().modify_classes, DataSet().rename_file],
-           [CheckDaset().check_txt, CheckDaset().check_imgsize, CheckDaset().check_buffdata, CheckDaset().check_armordata, CheckDaset().check_rockdata],
-           [CRawler().grawler_text, CRawler().grawler_image],
-           [Network().identify_hand, Network().identify_face, None, None, None, None],
-           # [Network().identify_hand, Network().identify_face],
-           [1, None, None, None, None, None],
-           [DEcompress().decompress_package],
-           [checkupdate]]
-run_function = {}
-
 # 功能子菜单
 for i in range(len(All_call)):
     for k in range(len(All_call[i])):
-        if i == 6 and k not in (0, 1, 6):
+        if (i == 7 or i == 5) and k not in (0, 1, 6):
             continue
-        if i == 8 and k not in (0, 6):
+        if i == 9 and (k not in (0, 6)):
             continue
         if k < len(All_call[i]) - 1:
             run_function[All_call[i][k]] = All_run[i][k]
@@ -769,7 +836,7 @@ for i in range(len(All_call)):
         UI_input[All_call[i][k]] = tk.Entry(ALL_submeum[i][k], width=30, font=("Arial", 20))
         UI_input[All_call[i][k]].pack(pady=10)
         UI_input[All_call[i][k]].bind("<Return>", submit_input)
-        if i != 9:
+        if i not in (6, 7, 10):
             tk.Button(ALL_submeum[i][k], text="浏览", font=("Arial", 18), command=select_path, width=10, bg="lightblue").pack(pady=10, padx=5)
         btn_submit = tk.Button(ALL_submeum[i][k], text="提交", command=submit_input, width=20, font=("Arial", 20), bg="lightblue")
         btn_submit.pack(pady=10)
@@ -782,11 +849,12 @@ tk.Label(main_menu, text="对于新用户请务必点击检查更新\n仔细阅�
                          "日志内容过多时用户可随意删除日志信息,\n但不可删除日志文件", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=20, padx=0)
 tk.Label(main_menu, text="未经开发者允许,\n严禁转载此工具,\n违者后果自负!\n如有疑问或发现bug,\n以及提出改进意见,\n请致信1795438624@qq.com反馈。\n"
          "开发者将十分感激获得您的宝贵反馈。\n", font=("Arial", 16)).grid(row=int(len(main_btn)/3)+4, column=1, columnspan=1, pady=10, padx=0)
-messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
-                               "再使用Ctrl+V粘贴到路径输入框中，将自动获取该文件路径，删去文件名以及扩展名即可获得此文件夹路径")
-messagebox.showwarning("注意！！", "为避免用户疲于输入参数和弹出窗口，后续所有需要输入的参数都可直接关闭弹出的输入窗口，只需输入路径，系统会自动使用确保程序正常运行的默认参数。")
-printupdate = False
-checkupdate('n,n')
-printupdate = True
+# messagebox.showwarning("温馨提示", "输入本地路径时，可进入到文件夹中，选定目标图片或视频等文件，使用Crtl+C复制文件，"
+#                                "再使用Ctrl+V粘贴到路径输入框中，将自动获取该文件路径，删去文件名以及扩展名即可获得此文件夹路径")
+# messagebox.showwarning("注意！！", "为避免用户疲于输入参数和弹出窗口，后续所有需要输入的参数都可直接关闭弹出的输入窗口，只需输入路径，系统会自动使用确保程序正常运行的默认参数。")
+# printupdate = False
+# checkupdate('n,n')
+# printupdate = True
+root.protocol("WM_DELETE_WINDOW", quit_app)
 root.mainloop()            # 运行主循环
 
