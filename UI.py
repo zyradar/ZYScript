@@ -47,30 +47,30 @@ def open_CheckData():
 
 def open_SystemTools():
     global password
-    password = None
-    askpassword = tk.Tk()
-    askpassword.geometry("400x300")
-    askpassword.title("权限获取")
-    askpermission = tk.Frame(askpassword)
-    askpermission.pack()
-    tk.Label(askpermission, text="您无使用权限\n请输入密码获取权限", font=("Arial", 18)).pack(pady=20)
-    password_entry = tk.Entry(askpermission, width=15, font=("Arial", 20))
-    password_entry.pack(pady=20)
+    if not password:
+        askpassword = tk.Tk()
+        askpassword.geometry("400x300")
+        askpassword.title("权限获取")
+        askpermission = tk.Frame(askpassword)
+        askpermission.pack()
+        tk.Label(askpermission, text="您无使用权限\n请输入密码获取权限", font=("Arial", 18)).pack(pady=20)
+        password_entry = tk.Entry(askpermission, width=15, font=("Arial", 20))
+        password_entry.pack(pady=20)
 
-    def get_password(event=None):
-        getpassword = password_entry.get()
-        global password
-        if getpassword == 'zy666':
-            password = True
-        else:
-            messagebox.showwarning('温馨提示', '密码错误，无权限')
-            password = None
-        askpassword.destroy()
+        def get_password(event=None):
+            getpassword = password_entry.get()
+            global password
+            if getpassword == 'zy666':
+                password = True
+            else:
+                messagebox.showwarning('温馨提示', '密码错误，无权限')
+                password = None
+            askpassword.destroy()
 
-    password_entry.bind("<Return>", get_password)
-    btn_submit = tk.Button(askpermission, text="提交", command=get_password, width=10, font=("Arial", 18), bg="lightblue")
-    btn_submit.pack(pady=20)
-    askpermission.wait_window()
+        password_entry.bind("<Return>", get_password)
+        btn_submit = tk.Button(askpermission, text="提交", command=get_password, width=10, font=("Arial", 18), bg="lightblue")
+        btn_submit.pack(pady=20)
+        askpermission.wait_window()
     if not password:
         return None
     main_menu.pack_forget()
@@ -138,7 +138,7 @@ def select_path():
     folder_selected = filedialog.askdirectory()  # 打开文件夹选择对话框
     if folder_selected:
         UI_input[call_name].delete(0, tk.END)  # 清空已有内容
-        UI_input[call_name].insert(0, folder_selected)  # 插入选定路径
+        UI_input[call_name].insert(0, folder_selected + '/')  # 插入选定路径
 
 
 def submit_input(event=None):
@@ -324,6 +324,21 @@ def call_label_cut_xywh():
     call_name = 'label_cut_xywh'
 
 
+def call_image_swap_ico():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(image_swap_ico, text="请输入待处理文件的路径\n路径格式为’C:/work/txt/‘或‘C:/work/txt/1.ico’\n"
+                                               "若只处理1个文件，在使用浏览自动填入路径后，需手动补上文件名以及其格式\n此功能为您提供图片和图标"
+                                               "文件的批量或单个处理的格式互换工具\n图片格式指例如(.jpg,.png,.bmp等)\n图标文件格式已知只有(.ico)", font=("Arial", 16))
+    show_label.pack(pady=10)
+    image_swap_ico.pack()
+    ack_window()
+    global call_name
+    call_name = 'image_swap_ico'
+
+
 def call_video_to_daset():
     main_entry[moudle_name].pack_forget()
     global show_label
@@ -484,9 +499,10 @@ def call_find_empty_files():
     if show_label:
         show_label.destroy()
     show_label = tk.Label(find_empty_files, text="请输入文件夹路径\n路径格式为’C:/Pictures/work/txt/‘\n"
-                                               "此功能将为您查找此磁盘内所有的空文件及其来源", font=("Arial", 14))
+                                                 "此功能将为您查找此磁盘内所有的空文件及其来源", font=("Arial", 14))
     show_label.pack(pady=10)
     find_empty_files.pack()
+    ack_window()
     global call_name
     call_name = 'find_empty_files'
 
@@ -497,11 +513,25 @@ def call_find_empty_folders():
     if show_label:
         show_label.destroy()
     show_label = tk.Label(find_empty_folders, text="请输入文件夹路径\n路径格式为’C:/Pictures/work/txt/‘\n"
-                                               "此功能将为您查找此磁盘内所有的空文件夹及其来源", font=("Arial", 14))
+                                                   "此功能将为您查找此磁盘内所有的空文件夹及其来源", font=("Arial", 14))
     show_label.pack(pady=10)
     find_empty_folders.pack()
+    ack_window()
     global call_name
     call_name = 'find_empty_folders'
+
+
+def call_create_shortcut():
+    main_entry[moudle_name].pack_forget()
+    global show_label
+    if show_label:
+        show_label.destroy()
+    show_label = tk.Label(create_shortcut, text="该功能将为用户提供自主编辑桌面快捷方式图标的功能\n输入框无要求，可随意输入字符\n输入字符无任何含义\n"
+                                                "仅作为启动该功能的触发器\n用于制作快捷方式的图标必须为.ico格式，\n否则将不会使用此图标!", font=("Arial", 14))
+    show_label.pack(pady=10)
+    create_shortcut.pack()
+    global call_name
+    call_name = 'create_shortcut'
 
 
 def call_grawler_text():
@@ -640,6 +670,7 @@ def ack_window():
                  font=("Arial", 16)).pack(pady=10)
         showtime_entry = tk.Entry(input_showtime, width=30, font=("Arial", 12))
         showtime_entry.pack(pady=10)
+        global flag
         flag = 1
 
         def isopen_window():                                    # 创建提交按钮
@@ -721,7 +752,7 @@ def updatehistory(state):
                     f.close()
                 with open('./Update history.txt', 'a+', encoding='utf-8') as f:
                     f.write(history)
-            messagebox.showwarning("版本历史", f'{history}')
+            # messagebox.showwarning("版本历史", f'{history}')
         except:
             messagebox.showwarning("注意!!", '无法获取版本历史!!\n可能的原因为:\n1.用户网络环境较差，请检查网络。\n'
                                            '2.用户本地计算机已启用代理,但未输入y或Y，或是用户本地未启用代理却输入y或Y\n'
@@ -777,11 +808,12 @@ change_bright, brightData, AntiColor, to_ExpandData = tk.Frame(root), tk.Frame(r
 ExpandData_submeum = [change_bright, brightData, AntiColor, to_ExpandData]
 
 
-ConvertFormat_call = ['json_to_buff', 'json_to_txt', 'label_add_xywh', 'label_cut_xywh', "返回上一级菜单"]
-ConvertFormat_function = [call_json_to_buff, call_json_to_txt, call_label_add_xywh, call_label_cut_xywh, return_to_main_menu]
-json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, to_ConvertFormat =\
-    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
-ConvertFormat_submeum = [json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, to_ConvertFormat]
+ConvertFormat_call = ['json_to_buff', 'json_to_txt', 'label_add_xywh', 'label_cut_xywh', 'image_swap_ico', "返回上一级菜单"]
+ConvertFormat_function = [call_json_to_buff, call_json_to_txt, call_label_add_xywh, call_label_cut_xywh,
+                          call_image_swap_ico, return_to_main_menu]
+json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, image_swap_ico, to_ConvertFormat =\
+    tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+ConvertFormat_submeum = [json_to_buff, json_to_txt, label_add_xywh, label_cut_xywh, image_swap_ico, to_ConvertFormat]
 
 
 MakeDataset_call = ["video_to_daset", "image_to_video", "montage_video", "connect_video",
@@ -801,10 +833,10 @@ check_txt, check_imgsize, check_armordata, check_rockdata, check_buffdata, to_Ch
 CheckData_submeum = [check_txt, check_imgsize, check_buffdata, check_armordata, check_rockdata, to_CheckData]
 
 
-SystemTools_call = ["find_empty_files", "find_empty_folders", "无权限", "无权限", "无权限", "无权限", "返回上一级菜单"]
-SystemTools_function = [call_find_empty_files, call_find_empty_folders, None, None, None, None, return_to_main_menu]
-find_empty_files, find_empty_folders, to_SystemTools = tk.Frame(root), tk.Frame(root), tk.Frame(root)
-SystemTools_submeum = [find_empty_files, find_empty_folders, None, None, None, None, to_SystemTools]
+SystemTools_call = ["find_empty_files", "find_empty_folders", "create_shortcut", "无权限", "无权限", "无权限", "返回上一级菜单"]
+SystemTools_function = [call_find_empty_files, call_find_empty_folders, call_create_shortcut, None, None, None, return_to_main_menu]
+find_empty_files, find_empty_folders, create_shortcut, to_SystemTools = tk.Frame(root), tk.Frame(root), tk.Frame(root), tk.Frame(root)
+SystemTools_submeum = [find_empty_files, find_empty_folders, create_shortcut, None, None, None, to_SystemTools]
 
 
 Crawler_call = ["grawler_text", "grawler_image", "返回上一级菜单"]
@@ -850,10 +882,10 @@ ALL_submeum = [CopyPaste_submeum, ExpandData_submeum, ConvertFormat_submeum, Mak
                CheckUpdate_submeum]
 All_run = [[COPYPaste().ROI_buff, COPYPaste().ROI_armor, COPYPaste().ROI_rock, COPYPaste().ROI_to_ground],
            [EXpandData().change_bright, EXpandData().brightData, EXpandData().AntiColor],
-           [Format().json_to_buff, Format().json_to_txt, Format().label_add_xywh, Format().label_cut_xywh],
+           [Format().json_to_buff, Format().json_to_txt, Format().label_add_xywh, Format().label_cut_xywh, Format().image_swap_ico],
            [DataSet().video_to_daset, DataSet().image_to_video, DataSet().montage_video, DataSet().connect_video, DataSet().modify_classes, DataSet().rename_file],
            [CheckDaset().check_txt, CheckDaset().check_imgsize, CheckDaset().check_buffdata, CheckDaset().check_armordata, CheckDaset().check_rockdata],
-           [Systemtool().find_empty_files, Systemtool().find_empty_folders, None, None, None, None],
+           [Systemtool().find_empty_files, Systemtool().find_empty_folders, Systemtool().create_shortcut, None, None, None],
            [CRawler().grawler_text, CRawler().grawler_image],
            [Network().identify_hand, Network().identify_face, None, None, None, None],
            [1, None, None, None, None, None],
@@ -870,7 +902,9 @@ for i in range(len(module_call)):
 # 功能子菜单
 for i in range(len(All_call)):
     for k in range(len(All_call[i])):
-        if (i == 7 or i == 5) and k not in (0, 1, 6):
+        if i == 5 and (k in (3, 4, 5)):
+            continue
+        if i == 7 and (k not in (0, 1, 6)):
             continue
         if i == 9 and (k not in (0, 6)):
             continue
@@ -881,7 +915,8 @@ for i in range(len(All_call)):
         UI_input[All_call[i][k]].pack(pady=10)
         UI_input[All_call[i][k]].bind("<Return>", submit_input)
         if i not in (6, 7, 10):
-            tk.Button(ALL_submeum[i][k], text="浏览", font=("Arial", 18), command=select_path, width=10, bg="lightblue").pack(pady=10, padx=5)
+            if not (i == 5 and (k not in (0, 1, 2))):
+                tk.Button(ALL_submeum[i][k], text="浏览", font=("Arial", 18), command=select_path, width=10, bg="lightblue").pack(pady=10, padx=5)
         btn_submit = tk.Button(ALL_submeum[i][k], text="提交", command=submit_input, width=20, font=("Arial", 20), bg="lightblue")
         btn_submit.pack(pady=10)
         btn_back = tk.Button(ALL_submeum[i][k], text="返回上一级菜单", command=return_to_Module, width=20, font=("Arial", 20), bg="lightgray")
@@ -890,9 +925,12 @@ for i in range(len(All_call)):
 
 main_menu.pack()           # 默认显示主菜单
 tk.Label(main_menu, text="对于新用户请务必点击检查更新\n仔细阅读更新相关提示\nrun.log文件中将记录系统的运行日志,\n可在日志文件中查看系统运行状况\n"
-                         "日志内容过多时用户可随意删除日志信息,\n但不可删除日志文件", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=20, padx=0)
+                         "日志内容过多时用户可随意删改日志信息。", font=("Arial", 16), bg="lightblue").grid(row=int(len(main_btn)/3)+2, column=1, columnspan=1, pady=20, padx=0)
 tk.Label(main_menu, text="未经开发者允许,\n严禁转载此工具,\n违者后果自负!\n如有疑问或发现bug,\n以及提出改进意见,\n请致信1795438624@qq.com反馈。\n"
          "开发者将十分感激获得您的宝贵反馈。\n", font=("Arial", 16)).grid(row=int(len(main_btn)/3)+4, column=1, columnspan=1, pady=10, padx=0)
+
+cv2.namedWindow('img', cv2.WINDOW_NORMAL)
+cv2.destroyWindow('img')
 
 with open('./autocheck_update.txt', 'a+') as f:
     f.seek(0)
@@ -911,6 +949,7 @@ with open('./_internal/fixupdate.txt', 'a+') as f:
 if isupdate:
     with open('./_internal/fixupdate.txt', 'w') as f:
         f.close()
+password = None
 root.protocol("WM_DELETE_WINDOW", quit_app)
 root.mainloop()            # 运行主循环
 

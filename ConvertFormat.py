@@ -4,21 +4,26 @@ import numpy as np
 import math
 import cv2
 import tkinter as tk
-from tkinter import messagebox
-import requests
+from tkinter import messagebox, filedialog
 from GetParameters import get_windowstate
+from PIL import Image
 
 
 class Format:
     def __init__(self, ):
         self.imgSize = (1920, 1200)
         self.perfix = "ground_"
-        self.get_img_format = '.jpg'
-        self.format = None
+        self.get_img_format = ('.jpg', '.png', '.bmp')
+        self.get_swap = 'ico'
+        self.format = ('.jpg', '.png', '.bmp')
+        self.save_path = None
+        self.save_img_format = '.bmp'
         # （1920， 1200）图片基准下（线条粗细基准，字体大小基准，字体y轴补偿）
         self.line_scale, self.text_scale, self.yawcompen_scale = 3, 1.5, 1.1
         self.open_window = False
         self.show_time = 0
+        self.ico_size = 256
+        self.get_entry_path = {}
 
     # 标注神符所需的json格式转成txt格式
     def json_to_buff(self, path):
@@ -40,16 +45,14 @@ class Format:
                     file.write(line + '\n')
             try:
                 if self.open_window:
-                    image_bytes = np.asarray(
-                        bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                        dtype=np.uint8)
-                    img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                    img = cv2.resize(img, (1920, 1200))
+                    with open('./_internal/win.jpg', 'rb') as f:
+                        img_array = np.frombuffer(f.read(), dtype=np.uint8)
+                    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
                     img = self.add_progress(img, count, len(os.listdir(path)), 1)
                     count += 1
                     self.take_gui(img)
             except:
-                messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
+                messagebox.showinfo('警告', "本地计算机不支持在本地部署可视化进度，请联系管理员获取可视化视图。")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "json_to_buff任务已完成")
 
@@ -69,16 +72,14 @@ class Format:
                     f.write(output_str)
             try:
                 if self.open_window:
-                    image_bytes = np.asarray(
-                        bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                        dtype=np.uint8)
-                    img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                    img = cv2.resize(img, (1920, 1200))
+                    with open('./_internal/win.jpg', 'rb') as f:
+                        img_array = np.frombuffer(f.read(), dtype=np.uint8)
+                    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
                     img = self.add_progress(img, count, len(os.listdir(path)), 1)
                     count += 1
                     self.take_gui(img)
             except:
-                messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
+                messagebox.showinfo('警告', "本地计算机不支持在本地部署可视化进度，请联系管理员获取可视化视图。")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "json_to_txt任务已完成")
 
@@ -143,18 +144,66 @@ class Format:
                     f.writelines(allline)
                 try:
                     if self.open_window:
-                        image_bytes = np.asarray(
-                            bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                            dtype=np.uint8)
-                        img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                        img = cv2.resize(img, (1920, 1200))
+                        with open('./_internal/win.jpg', 'rb') as f:
+                            img_array = np.frombuffer(f.read(), dtype=np.uint8)
+                        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
                         img = self.add_progress(img, count, len(os.listdir(path)), 1)
                         count += 1
                         self.take_gui(img)
                 except:
-                    messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
+                    messagebox.showinfo('警告', "本地计算机不支持在本地部署可视化进度，请联系管理员获取可视化视图。")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "label_cut_xywh任务已完成")
+
+    def image_swap_ico(self, path):
+        self.ico_size = 256
+        self.get_entry_path = {}
+        self.open_window, self.show_time = get_windowstate()
+        count = 0
+        self.get_format()
+        self.set_swap()
+        if os.path.isdir(path):
+            for name in os.listdir(path):
+                if name.endswith(self.format):
+                    if self.get_swap == 'ico':
+                        self.image_to_ico(os.path.join(path, name), name.split('.')[0], count, len(os.listdir(path)))
+                    else:
+                        self.ico_to_image(os.path.join(path, name), name.split('.')[0], count, len(os.listdir(path)))
+        else:
+            if self.get_swap == 'ico':
+                self.image_to_ico(path, os.path.splitext(os.path.basename(path))[0], count, 1)
+            else:
+                self.ico_to_image(path, os.path.splitext(os.path.basename(path))[0], count, 1)
+        cv2.destroyAllWindows()
+        messagebox.showinfo('温馨提示', "image_swap_ico任务已完成")
+
+    def ico_to_image(self, path, name, count, counts):
+        image = Image.open(path)  # 读取ICO文件
+        image = image.convert("RGB")  # 转换为 RGB 格式（防止透明通道问题）
+        img = np.array(image)  # 转换为 OpenCV 格式
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # PIL是RGB，OpenCV需要BGR
+        img = cv2.resize(img, self.ico_size)
+        success, encoded_image = cv2.imencode(self.save_img_format, img)
+        if success:
+            with open(f'{self.save_path}/{name}{self.save_img_format}', 'wb') as f:
+                f.write(encoded_image)
+        if self.open_window:
+            img = self.add_progress(img, count, counts, None)
+            count += 1
+            self.take_gui(img)
+
+    def image_to_ico(self, path, name, count, counts):
+        image = Image.open(path).convert("RGBA")
+        background = Image.new("RGBA", image.size, (255, 255, 255, 255))        # 创建白色背景
+        image = Image.alpha_composite(background, image)                        # 合并图片
+        image.save(f'{self.save_path}/{name}.ico', format="ICO", sizes=self.ico_size)                     # 保存 ICO
+        with open(path, 'rb') as f:
+            img_array = np.frombuffer(f.read(), dtype=np.uint8)
+        dst = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
+        if self.open_window:
+            dst = self.add_progress(dst, count, counts, None)
+            count += 1
+            self.take_gui(dst)
 
     def get_rectangle(self, xywh, goal_type):
         if goal_type:
@@ -197,17 +246,62 @@ class Format:
         getformat = tk.Tk()
         getformat.geometry("400x300")
         getformat.title("选择处理格式")
-        tk.Label(getformat, text="请输入你要处理的文件格式\n如’.jpg‘或’.png‘,请勿输入多个格式\n关闭该窗口或输入空信息将使用默认格式\n"
-                                 "默认格式：.jpg", font=("Arial", 14)).pack(pady=10)
+        tk.Label(getformat, text="请输入你要处理的文件格式\n如’.jpg‘或’.png‘,'.ico'等\n关闭该窗口或输入空信息将使用默认格式\n"
+                                 "默认格式:'.jpg', 'png', 'bmp'", font=("Arial", 14)).pack(pady=10)
         format_entry = tk.Entry(getformat, width=30, font=("Arial", 12))
         format_entry.pack(pady=10)
 
         def on_submit():                                    # 创建提交按钮
-            self.format = format_entry.get()
-            # self.format = tuple(i.strip(' ') for i in self.format.split(','))
+            self.format = format_entry.get() if format_entry.get() else self.format
+            try:
+                self.format = tuple(i.strip(' ') for i in self.format.split(','))
+            except:
+                self.format = self.format
             getformat.destroy()                          # 关闭输入窗口
-        tk.Button(getformat, text="提交", command=on_submit, width=20, bg="lightblue").pack(pady=10)
-        getformat.wait_window()                          # 等待直到输入窗口关闭
+        tk.Button(getformat, text="提交", command=on_submit, width=15, font=("Arial", 16), bg="lightblue").pack(pady=10)
+        getformat.wait_window()
+
+    def set_swap(self):
+        setswap = tk.Tk()
+        setswap.geometry("500x400")
+        setswap.title("转换设置")
+        tk.Label(setswap, text="因涉及本地路径,该窗口不可跳过!", font=("Arial", 18)).grid(row=0, column=0, columnspan=2, pady=10, padx=0)
+        tk.Label(setswap, text="输入要保存的路径:", font=("Arial", 16)).grid(row=1, column=0, pady=10, padx=0)
+        save_path_entry = tk.Entry(setswap, width=20, font=("Arial", 15))
+        save_path_entry.grid(row=1, column=1, pady=10, padx=0)
+        self.get_entry_path['save_path'] = save_path_entry
+        tk.Button(setswap, text="浏览", command=lambda: self.select_path('save_path'), width=10, bg="lightblue",
+                  font=("Arial", 14)).grid(row=2, column=1, pady=0, padx=0)
+        tk.Label(setswap, text="输入要获得的格式:", font=("Arial", 16)).grid(row=3, column=0, pady=10, padx=0)
+        save_img_entry = tk.Entry(setswap, width=20, font=("Arial", 15))
+        save_img_entry.grid(row=3, column=1, pady=10, padx=0)
+        tk.Label(setswap, text="获得的文件大小(默认256):", font=("Arial", 16)).grid(row=4, column=0, pady=10, padx=0)
+        ico_size_entry = tk.Entry(setswap, width=20, font=("Arial", 15))
+        ico_size_entry.grid(row=4, column=1, pady=10, padx=0)
+        tk.Label(setswap, text="图标文件一般为(单个数字)32,128,256。\n图片文件一般为(2个数字用逗号隔开)1920,1280", font=("Arial", 14)).grid(row=5, column=0, columnspan=2, pady=10, padx=0)
+
+        def on_submit():                                    # 创建提交按钮
+            self.save_path = save_path_entry.get() if save_path_entry.get() else None
+            self.save_img_format = save_img_entry.get() if save_img_entry.get() else None
+            self.ico_size = ico_size_entry.get() if ico_size_entry.get() else self.ico_size
+            if self.save_img_format == '.ico':
+                self.get_swap = 'ico'
+                self.ico_size = [(int(self.ico_size), int(self.ico_size))]
+            else:
+                self.get_swap = 'img'
+                self.ico_size = (int(self.ico_size.split(',')[0]), int(self.ico_size.split(',')[1]))
+            setswap.destroy()                          # 关闭输入窗口
+        tk.Button(setswap, text="提交", command=on_submit, width=15, font=("Arial", 16), bg="lightblue").grid(row=6, column=0, columnspan=2, pady=10)
+        setswap.wait_window()                          # 等待直到输入窗口关闭
+
+    def select_path(self, entry_name):
+        # if entry_name == 'desktop_path':
+        folder_selected = filedialog.askdirectory()  # 打开文件夹选择对话框
+        # else:
+        #     folder_selected = filedialog.askopenfilename()  # 打开文件夹选择对话框
+        if folder_selected:
+            self.get_entry_path[entry_name].delete(0, tk.END)  # 清空已有内容
+            self.get_entry_path[entry_name].insert(0, folder_selected)  # 插入选定路径
 
     # 添加工作进度条
     def add_progress(self, img, count, counts, value):
@@ -250,4 +344,5 @@ class Format:
 
 
 # Format().label_cut_xywh('C:/Users/HZY/Pictures/work/txt/')
-
+# Format().image_swap_ico('D:/MYproject/ZYscript/test/')
+# Format().set_swap()

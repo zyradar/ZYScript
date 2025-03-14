@@ -46,16 +46,14 @@ class CheckDaset:
                     self.write_error(path, file_path, filename, "cant't find or classes error in")
                 try:
                     if self.open_window:
-                        image_bytes = np.asarray(
-                            bytearray(requests.get("https://pic.quanjing.com/28/h3/QJ5100545083.jpg@%21350h").content),
-                            dtype=np.uint8)
-                        img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-                        img = cv2.resize(img, (1920, 1200))
+                        with open('./_internal/win.jpg', 'rb') as f:
+                            img_array = np.frombuffer(f.read(), dtype=np.uint8)
+                        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
                         img = self.add_progress(img, count, len(os.listdir(path)), 1)
                         count += 1
                         self.take_gui(img)
                 except:
-                    messagebox.showinfo('警告', "本地计算机已启用代理，将禁用进度可视化")
+                    messagebox.showinfo('警告', "本地计算机不支持在本地部署可视化进度，请联系管理员获取可视化视图。")
         cv2.destroyAllWindows()
         messagebox.showinfo('温馨提示', "check_txt任务已完成")
 

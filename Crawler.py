@@ -6,9 +6,8 @@ import pandas as pd
 import numpy as np
 import cv2
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from GetParameters import get_windowstate
-
 
 class CRawler:
     def __init__(self):
@@ -59,6 +58,7 @@ class CRawler:
         }
         self.open_window = False
         self.show_time = 1
+        self.get_entry_path = {}
 
     def grawler_text(self, flag):
         self.top_results.clear()
@@ -149,7 +149,6 @@ class CRawler:
                 df.to_excel(self.save_path + self.save_name + self.format[self.save_format], index=False, engine='openpyxl')
         else:
             messagebox.showwarning('警告', f"{response.status_code}")
-        messagebox.showinfo('温馨提示', "grawler_text任务已完成")
 
     def grawler_image(self, flag):
         self.open_window, self.show_time = get_windowstate()
@@ -172,10 +171,13 @@ class CRawler:
                 dtype=np.uint8)
         img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
         img = cv2.resize(img, (1920, 1200))
-        cv2.imwrite(self.save_path + self.save_name + '.' + self.save_format, img)
+        success, encoded_image = cv2.imencode('.bmp', img)
+        if success:
+            with open(self.save_path + self.save_name + '.' + self.save_format, 'wb') as f:
+                f.write(encoded_image)
+        # cv2.imwrite(self.save_path + self.save_name + '.' + self.save_format, img)
         if self.open_window:
             self.take_gui(img)
-        messagebox.showinfo('温馨提示', "grawler_image任务已完成")
 
     def set_save_file(self):
         set_window = tk.Tk()
@@ -197,12 +199,15 @@ class CRawler:
         tk.Label(set_window, text="设置文件保存的文件夹路径:", font=("Arial", 16)).grid(row=5, column=0, pady=5)
         save_path_entry = tk.Entry(set_window, width=30)
         save_path_entry.grid(row=5, column=1, pady=5)
-        tk.Label(set_window, text="设置文件保存的名字:", font=("Arial", 16)).grid(row=6, column=0, pady=5)
+        self.get_entry_path['save_path_entry'] = save_path_entry
+        tk.Button(set_window, text="浏览", command=lambda: self.select_path('save_path_entry'), width=10, bg="lightblue",
+                  font=("Arial", 14)).grid(row=6, column=1, pady=0)
+        tk.Label(set_window, text="设置文件保存的名字:", font=("Arial", 16)).grid(row=7, column=0, pady=5)
         save_name_entry = tk.Entry(set_window, width=30)
-        save_name_entry.grid(row=6, column=1, pady=5)
-        tk.Label(set_window, text="设置保存的文件类型，如'word':", font=("Arial", 16)).grid(row=7, column=0, pady=5)
+        save_name_entry.grid(row=7, column=1, pady=5)
+        tk.Label(set_window, text="设置保存的文件类型，如'word':", font=("Arial", 16)).grid(row=8, column=0, pady=5)
         save_format_entry = tk.Entry(set_window, width=30)
-        save_format_entry.grid(row=7, column=1, pady=5)
+        save_format_entry.grid(row=8, column=1, pady=5)
 
         def on_submit():                                    # 创建提交按钮
             self.url = url_entry.get() if url_entry.get() else self.url
@@ -213,9 +218,9 @@ class CRawler:
             self.save_name = save_name_entry.get() if save_name_entry.get() else self.save_name
             self.save_format = save_format_entry.get() if save_format_entry.get() else self.save_format
             set_window.destroy()                          # 关闭输入窗口
-        tk.Button(set_window, text="提交", command=on_submit, width=20, bg="lightblue", font=("Arial", 16)).grid(row=8, column=0, columnspan=2, pady=10)
+        tk.Button(set_window, text="提交", command=on_submit, width=20, bg="lightblue", font=("Arial", 18)).grid(row=9, column=0, columnspan=2, pady=10)
         tk.Label(set_window, text="当前系统内部配置伪装浏览器仅有:\nchrome，lenovo，edge\n仅支持爬取信息保存文件类型为:\n"
-                                  "word,txt,excel以及一切图片格式（jpg,png等）", font=("Arial", 16)).grid(row=9, column=0, pady=10)
+                                  "word,txt,excel以及一切图片格式（jpg,png等）", font=("Arial", 16)).grid(row=10, column=0, pady=10)
         set_window.wait_window()                          # 等待直到输入窗口关闭
 
     def choice_result(self):
@@ -239,6 +244,12 @@ class CRawler:
         tk.Label(set_window, text="已为你爬取到访问量最高,最热点的内容\n请选取其中任一内容进行爬取", font=("Arial", 16)).grid(row=i, column=0, pady=40)
         set_window.wait_window()                          # 等待直到输入窗口关闭
 
+    def select_path(self, entry_name):
+        folder_selected = filedialog.askdirectory()  # 打开文件夹选择对话框
+        if folder_selected:
+            self.get_entry_path[entry_name].delete(0, tk.END)  # 清空已有内容
+            self.get_entry_path[entry_name].insert(0, folder_selected + '/')  # 插入选定路径
+
     def take_gui(self, img):
         cv2.namedWindow("gui", cv2.WINDOW_NORMAL)
         cv2.imshow("gui", img)
@@ -247,6 +258,7 @@ class CRawler:
             cv2.destroyAllWindows()
 
 
-# CRawler().grawler_text('螨虫')
+# CRawler().grawler_image(1)
 # CRawler().set_save_file()
 # 127.0.0.1:7890
+
