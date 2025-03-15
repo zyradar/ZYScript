@@ -7,3 +7,4 @@ google
 cvzone==1.5.6
 mediapipe==0.8.10.1
 PIL
+pywin
