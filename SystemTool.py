@@ -276,7 +276,7 @@ class Systemtool:
         self.progress_label.pack()
 
 
-Systemtool().find_empty_files('D:/MYproject/ZYscript/test')
+# Systemtool().find_empty_files('D:/MYproject/ZYscript/test')
 # Systemtool().create_shortcut(1)
 # Systemtool().tese()
 
