@@ -128,26 +128,41 @@ class Systemtool:
         else:
             self.label.config(text="当前选中: (请选择文件夹)")
 
-    def delete_empty_files(self):                                       # 删除当前选中目录下的所有空文件
+    def delete_empty_files(self):  # 递归删除当前选中目录及所有子目录下的空文件
         if not self.selected_folder:
             messagebox.showwarning("警告", "请先选择一个文件夹！")
             return
-        confirm = messagebox.askyesno("确认删除", f"确定删除 {self.selected_folder} 下的所有空文件吗？")
-        if confirm:
-            empty_files = self.empty_files_by_folder.get(self.selected_folder, [])
-            deleted_count = 0
-            for file in empty_files:
-                try:
-                    if self.flag == '空文件':
-                        os.remove(file)
-                    elif self.flag == '空文件夹':
-                        os.rmdir(file)
-                    deleted_count += 1
-                except PermissionError:
-                    continue
-            self.find_empty(self.path)                                  # 重新扫描并更新界面
-            self.refresh_tree()
-            messagebox.showinfo("删除成功", f"已删除 {deleted_count} 个空文件！")
+        confirm = messagebox.askyesno("确认删除", f"确定删除 {self.selected_folder} 及其所有子目录中的空文件吗？")
+        if not confirm:
+            return
+        deleted_count = 0  # 记录删除数量
+
+        def delete_in_folder(folder):
+            nonlocal deleted_count
+            if folder in self.empty_files_by_folder:  # 如果该目录下有空文件
+                empty_files = self.empty_files_by_folder[folder]
+                for file in empty_files:
+                    try:
+                        if self.flag == '空文件':
+                            os.remove(file)
+                        elif self.flag == '空文件夹':
+                            os.rmdir(file)
+                        print(file)
+                        deleted_count += 1
+                    except PermissionError:
+                        continue
+            try:        # 递归遍历子目录
+                for subfolder in os.listdir(folder):
+                    subfolder_path = os.path.join(folder, subfolder)
+                    if os.path.isdir(subfolder_path):  # 如果是子目录，则递归删除
+                        delete_in_folder(subfolder_path)
+            except PermissionError:
+                pass  # 忽略权限不足的目录
+
+        delete_in_folder(self.selected_folder)      # 调用递归函数
+        self.find_empty(self.path)      # 重新扫描并更新界面
+        self.refresh_tree()
+        messagebox.showinfo("删除成功", f"已删除 {deleted_count} 个空文件！")
 
     def refresh_tree(self):                                             # 重新加载 Treeview
         self.tree.delete(*self.tree.get_children())                     # 清空Treeview
@@ -262,7 +277,7 @@ class Systemtool:
         self.progress_label.pack()
 
 
-# Systemtool().find_empty_folders('D:/MYproject/ZYscript/test')
+Systemtool().find_empty_files('D:/MYproject/ZYscript/test')
 # Systemtool().create_shortcut(1)
 # Systemtool().tese()
 
