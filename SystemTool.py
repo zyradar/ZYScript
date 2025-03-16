@@ -147,7 +147,6 @@ class Systemtool:
                             os.remove(file)
                         elif self.flag == '空文件夹':
                             os.rmdir(file)
-                        print(file)
                         deleted_count += 1
                     except PermissionError:
                         continue
