@@ -6,16 +6,6 @@ import win32com.client
 from GetParameters import get_windowstate
 
 
-empty_files_by_folder={'D:/MYproject/ZYscript/test': ['D:/MYproject/ZYscript/test\\test1\\b',
-                                                      'D:/MYproject/ZYscript/test\\test1\\c',
-                                                      'D:/MYproject/ZYscript/test\\test1\\d',
-                                                      'D:/MYproject/ZYscript/test\\test1\\f'],
-                       'D:/MYproject/ZYscript/test\\dst': ['D:/MYproject/ZYscript/test\\dst\\1\\5'],
-                       'D:/MYproject/ZYscript/test\\test1': ['D:/MYproject/ZYscript/test\\test1\\a\\a',
-                                                             'D:/MYproject/ZYscript/test\\test1\\a\\新建文件夹']}
-
-
-
 class Systemtool:
     def __init__(self):
         self.empty_files_by_folder = {}
@@ -135,10 +125,21 @@ class Systemtool:
         confirm = messagebox.askyesno("确认删除", f"确定删除 {self.selected_folder} 及其所有子目录中的空文件吗？")
         if not confirm:
             return
+        if self.open_window:
+            self.take_gui("文件删除进度")
+            delect_list = list(os.walk(self.selected_folder))
+            total_steps = len(delect_list)
+            self.progress_bar["maximum"] = total_steps
+        step = 0
         deleted_count = 0  # 记录删除数量
 
         def delete_in_folder(folder):
-            nonlocal deleted_count
+            nonlocal deleted_count, step, total_steps
+            step += 1
+            if self.open_window:
+                self.progress_bar["value"] = step
+                self.progress_label.config(text=f"正在遍历: {folder} ({step}/{total_steps})")
+                self.progress.update_idletasks()
             if folder in self.empty_files_by_folder:  # 如果该目录下有空文件
                 empty_files = self.empty_files_by_folder[folder]
                 for file in empty_files:
@@ -159,6 +160,8 @@ class Systemtool:
                 pass  # 忽略权限不足的目录
 
         delete_in_folder(self.selected_folder)      # 调用递归函数
+        if self.open_window:
+            self.progress.destroy()
         self.find_empty(self.path)      # 重新扫描并更新界面
         self.refresh_tree()
         messagebox.showinfo("删除成功", f"已删除 {deleted_count} 个空文件！")
@@ -172,7 +175,7 @@ class Systemtool:
         self.empty_files_by_folder.clear()                              # 清空旧数据
         step = 0
         if self.open_window:
-            self.take_gui()
+            self.take_gui("文件加载进度")
             walk_list = list(os.walk(path))
             total_steps = len(walk_list)
             self.progress_bar["maximum"] = total_steps
@@ -266,9 +269,9 @@ class Systemtool:
             .grid(row=5, column=1, columnspan=1, pady=10)
         root.wait_window()                          # 等待直到输入窗口关闭
 
-    def take_gui(self):
+    def take_gui(self, tip):
         self.progress = tk.Tk()
-        self.progress.title("文件加载进度")
+        self.progress.title(tip)
         self.progress.geometry("400x150")
         self.progress_bar = ttk.Progressbar(self.progress, orient="horizontal", length=300, mode="determinate")
         self.progress_bar.pack(pady=20)
