@@ -765,7 +765,7 @@ root.title("DATA TOOL")
 root.geometry("800x900")                                                # 窗口大小
 main_menu = tk.Frame(root)                                              # 主菜单界面
 tk.Label(main_menu, text="MENU", font=("Arial", 18)).grid(row=0, column=1, columnspan=1, pady=10, padx=0)
-main_btn = ["贴图裁剪", "数据增强", "转换格式", "制作数据集", "检查数据集", '无权限', '无权限', '系统工具', '爬虫', '神经网络',
+main_btn = ["贴图裁剪", "数据增强", "转换格式", "制作数据集", "检查数据集", 'bcc', '无权限', '系统工具', '爬虫', '神经网络',
             'deepseek', '无权限', '无权限', '无权限', '解压压缩', '检查更新', "退出"]
 main_function = [open_CopyPaste, open_ExpandData, open_ConvertFormat, open_MakeDataset, open_CheckData, None, None, open_SystemTools,
                  open_Crawler, open_NeuralNetwork, open_deepseek, None, None, None,
