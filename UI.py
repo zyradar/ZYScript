@@ -941,12 +941,9 @@ with open('./autocheck_update.txt', 'a+') as f:
         f.write('y')
 with open('./_internal/fixupdate.txt', 'a+') as f:
     f.seek(0)
-    if f.read():
-        isupdate = True
-        checkupdate('n,n')
-    else:
-        isupdate = False
+    isupdate = f.read()
 if isupdate:
+    checkupdate('n,n')
     with open('./_internal/fixupdate.txt', 'w') as f:
         f.close()
 password = None
