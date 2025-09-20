@@ -39,6 +39,11 @@ class EXpandData:
             dst = np.power(img_Scal / 255., 1 / (self.exposure / 100 + 1))                      # 曝光
             dst = np.uint8(dst * 255)
             cv2.imshow('image', dst)
+            name = os.listdir(path)
+            success, encoded_image = cv2.imencode('.bmp', dst)
+            if success:
+                with open(path + "exhigh_" + name, 'wb') as f:
+                    f.write(encoded_image)
             if cv2.waitKey(1) == 27:
                 break
 
