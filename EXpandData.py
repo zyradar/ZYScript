@@ -124,8 +124,8 @@ class EXpandData:
         self.heri = cv2.getTrackbarPos('heri', 'image')
         self.col = cv2.getTrackbarPos('col', 'image')
         self.exposure = cv2.getTrackbarPos('exposure', 'image')
-        messagebox.showinfo("参数确认", f"hsv通道值: {self.col}\n亮度（hsv三通道值）: {self.heri}\n"
-                                    f"RGB对比度系数: {self.alpha}\nRGB亮度值: {self.beta}\n曝光系数: {self.exposure}")
+        # messagebox.showinfo("参数确认", f"hsv通道值: {self.col}\n亮度（hsv三通道值）: {self.heri}\n"
+        #                             f"RGB对比度系数: {self.alpha}\nRGB亮度值: {self.beta}\n曝光系数: {self.exposure}")
 
     def addtrackbar(self):
         cv2.createTrackbar('Alpha', 'image', 0, 500, self.Arguments)
