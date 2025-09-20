@@ -40,12 +40,12 @@ class EXpandData:
             dst = np.uint8(dst * 255)
             cv2.imshow('image', dst)
             name = os.listdir(path)
-            success, encoded_image = cv2.imencode('.bmp', dst)
-            if success:
-                with open(path + "exhigh_" + name, 'wb') as f:
-                    f.write(encoded_image)
             if cv2.waitKey(1) == 27:
                 break
+        success, encoded_image = cv2.imencode('.bmp', dst)
+        if success:
+            with open(path + "exhigh_" + name, 'wb') as f:
+                f.write(encoded_image)
 
     def brightData(self, path):
         self.open_window, self.show_time = get_windowstate()
