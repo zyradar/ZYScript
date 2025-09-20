@@ -30,7 +30,6 @@ class EXpandData:
         # img = cv2.imread(path)
         img = cv2.resize(img, (640, 384))
         cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-        name = os.listdir(path)
         self.addtrackbar()
         while True:
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)                                          # 转换为HSV色彩空间
@@ -56,6 +55,7 @@ class EXpandData:
             self.get_img_format = self.format
         count = 0
         counts = len(os.listdir(path))
+        os.makedirs(os.path.dirname(path) + "/test/", exist_ok=True)
         for name in os.listdir(path):
             if name.endswith(self.get_img_format):
                 with open(path + name, 'rb') as f:
@@ -71,7 +71,7 @@ class EXpandData:
                 dst = np.uint8(dst * 255)
                 success, encoded_image = cv2.imencode('.bmp', dst)
                 if success:
-                    with open(path + "exhigh_" + name, 'wb') as f:
+                    with open(path + "/test/exhigh_" + name, 'wb') as f:
                         f.write(encoded_image)
                 # cv2.imwrite(path + "exhigh_" + name, dst)
                 if self.open_window:
