@@ -30,6 +30,7 @@ class EXpandData:
         # img = cv2.imread(path)
         img = cv2.resize(img, (640, 384))
         cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+        name = os.listdir(path)
         self.addtrackbar()
         while True:
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)                                          # 转换为HSV色彩空间
@@ -39,12 +40,12 @@ class EXpandData:
             dst = np.power(img_Scal / 255., 1 / (self.exposure / 100 + 1))                      # 曝光
             dst = np.uint8(dst * 255)
             cv2.imshow('image', dst)
-            name = os.listdir(path)
             if cv2.waitKey(1) == 27:
                 break
         success, encoded_image = cv2.imencode('.bmp', dst)
         if success:
-            with open(path + "exhigh_" + name, 'wb') as f:
+            os.makedirs(os.path.dirname(path) + "/test/", exist_ok=True)
+            with open(os.path.dirname(path) + "/test/exhigh_" + os.path.basename(path), 'wb') as f:
                 f.write(encoded_image)
 
     def brightData(self, path):
