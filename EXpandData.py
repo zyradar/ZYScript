@@ -28,7 +28,7 @@ class EXpandData:
             img_array = np.frombuffer(f.read(), dtype=np.uint8)
         img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
         # img = cv2.imread(path)
-        img = cv2.resize(img, (640, 384))
+        # img = cv2.resize(img, (640, 384))
         cv2.namedWindow('image', cv2.WINDOW_NORMAL)
         self.addtrackbar()
         while True:
@@ -62,7 +62,7 @@ class EXpandData:
                     img_array = np.frombuffer(f.read(), dtype=np.uint8)
                 img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)  # 解析图片数据
                 # img = cv2.imread(path + name)
-                img = cv2.resize(img, self.imgsize)
+                # img = cv2.resize(img, self.imgsize)
                 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)  # 转换为HSV色彩空间
                 hsv[:, :, self.col] -= self.heri  # 调整亮度，将亮度的值增加50
                 img_hsv = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)  # 转换回BGR色彩空间
